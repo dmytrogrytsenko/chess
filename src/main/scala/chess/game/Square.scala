@@ -7,7 +7,7 @@ case class File(index: Int) {
 }
 
 object File {
-  val all = (1 until 8).map(File.apply)
+  val all = (1 to 8).map(File.apply)
   def apply(name: Char): File = File(name - 'a' + 1)
   def isValid(index: Int) = index >= 1 && index <= 8
   def get(index: Int) = if (isValid(index)) Some(File(index)) else None
@@ -20,7 +20,7 @@ case class Rank(index: Int) {
 }
 
 object Rank {
-  val all = (1 until 8).map(Rank.apply)
+  val all = (1 to 8).map(Rank.apply)
   def apply(name: Char): Rank = Rank(name - '0')
   def isValid(index: Int) = index >= 1 && index <= 8
   def get(index: Int) = if (isValid(index)) Some(Rank(index)) else None

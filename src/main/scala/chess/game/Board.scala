@@ -1,8 +1,24 @@
 package chess.game
 
+import chess.common._
+
 case class Board(squares: Map[Square, Piece]) {
-  lazy val byColor: Map[PieceColor, Map[Square, Piece]] = Set(White, Black).map(filterByColor).toMap
-  lazy val king: Map[PieceColor, Option[Square]] = Set(White, Black).map(findKing).toMap
+  lazy val byColor = Set(White, Black).map(filterByColor).toMap
+  lazy val king = Set(White, Black).map(findKing).toMap
+
+  def make(mv: Movement): Board =
+    this.move(mv.src -> mv.dst).pipe { updating =>
+      mv.kind match {
+        case EnPassant => updating.clear(mv.capturedSquare.get)
+        case Promotion => updating.put(mv.dst, mv.promoted.get)
+        case Castling => updating.move(mv.guardSrc.get, mv.guardDst.get)
+        case _ => updating
+      }
+    }
+
+  private def move(src2dst: (Square, Square)) = this.clear(src2dst._1).put(src2dst._2, squares(src2dst._1))
+  private def clear(square: Square) = this.copy(squares = squares - square)
+  private def put(square: Square, piece: Piece) = this.copy(squares = squares + (square -> piece))
 
   private def filterByColor(color: PieceColor) =
     color -> squares.filter { case (_, piece) => piece.color == color }

@@ -30,6 +30,8 @@ libraryDependencies ++= {
     "org.joda" % "joda-convert" % "1.6",
     "joda-time" % "joda-time" % "2.6",
     "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka23",
-    "org.reactivemongo" %% "reactivemongo-extensions-bson" % "0.10.5.0.0.akka23"
+    "org.reactivemongo" %% "reactivemongo-extensions-bson" % "0.10.5.0.0.akka23",
+    "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+    "org.scalatest" %% "scalatest" % "2.2.6"
   )
 }

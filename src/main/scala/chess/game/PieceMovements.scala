@@ -1,5 +1,7 @@
 package chess.game
 
+import chess.common._
+
 object PieceMovements {
 
   def underAttack(game: Game, square: Square): Boolean =

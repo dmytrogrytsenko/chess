@@ -4,7 +4,9 @@ import chess.common._
 import org.joda.time.DateTime
 import chess.game.PieceMovements._
 
-case class Version(underlying: Int) extends AnyVal
+case class Version(underlying: Int) extends AnyVal {
+  def next = Version(underlying + 1)
+}
 
 object Version {
   val initial = Version(1)
@@ -28,6 +30,13 @@ case class Game(id: GameId,
   lazy val check = board.king(movingPlayer).exists(underAttack(this, _))
   lazy val checkmate: Boolean = check && movements.isEmpty
   lazy val stalemate: Boolean = !check && movements.isEmpty
+
+  def make(movement: Movement): Game = copy(
+    version = version.next,
+    board = board.make(movement),
+    movingPlayer = movingPlayer.opposite,
+    initials = initials - movement.src,
+    history = history :+ movement)
 }
 
 object Game {
