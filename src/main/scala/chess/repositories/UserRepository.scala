@@ -1,13 +1,20 @@
 package chess.repositories
 
 import chess.common._
-import chess.common.Messages.Start
 import chess.common.actors.{NodeSingleton1, BaseActor}
-import chess.domain.{UserId, User}
+import chess.common.Messages.Start
+import chess.common.mongo._
+import chess.domain.Identifiers.UserId
+import chess.domain.User
 import chess.mongo.UserCollection
 import reactivemongo.api.DB
+import reactivemongo.core.errors.DatabaseException
 
 object UserRepository extends NodeSingleton1[UserRepository, DB] {
+  case class AddUser(user: User)
+  case class UserAdded(userId: UserId)
+  case class UserAlreadyExists(userId: UserId)
+
   case class FindUserById(userId: UserId)
   sealed trait FindUserByIdResult
   case class UserFoundById(user: User) extends FindUserByIdResult
@@ -27,6 +34,11 @@ class UserRepository(implicit val db: DB) extends BaseActor {
 
   def receive = {
     case Start => ensureIndexes
+
+    case AddUser(user) =>
+      add(user).map(_ => UserAdded(user.id)).recover {
+        case e: DatabaseException if isDuplicateKeyError(e.code) => UserAlreadyExists(user.id)
+      } pipeTo sender()
 
     case FindUserById(userId) =>
       get(userId) map {

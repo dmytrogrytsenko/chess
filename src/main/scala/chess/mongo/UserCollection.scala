@@ -1,10 +1,13 @@
 package chess.mongo
 
 import chess.common.mongo.MongoCollection
-import chess.domain.{UserId, User}
+import chess.domain.Identifiers._
+import chess.domain.User
+import org.joda.time.DateTime
 import reactivemongo.api.indexes.{IndexType, Index}
 import reactivemongo.api.DB
 import reactivemongo.bson._
+import reactivemongo.extensions.dao.Handlers.BSONDateTimeHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -13,24 +16,28 @@ object UserCollection extends MongoCollection[UserId, User] {
   val name = "users"
 
   implicit object UserIdReader extends BSONReader[BSONString, UserId] {
-    def read(bson: BSONString): UserId = UserId(bson.value)
+    def read(bson: BSONString): UserId = bson.value.toUserId
   }
 
   implicit object UserIdWriter extends BSONWriter[UserId, BSONString] {
-    def write(value: UserId): BSONString = BSONString(value.underlying)
+    def write(value: UserId): BSONString = BSONString(value)
   }
 
   implicit object UserWriter extends BSONDocumentWriter[User] {
     def write(value: User) = $doc(
       "_id" -> value.id,
       "name" -> value.name,
-      "nameLC" -> value.name.toLowerCase)
+      "nameLC" -> value.name.toLowerCase,
+      "password" -> value.password,
+      "createdAt" -> value.createdAt)
   }
 
   implicit object UserReader extends BSONDocumentReader[User] {
     def read(doc: BSONDocument) = User(
       id = doc.getAs[UserId]("_id").get,
-      name = doc.getAs[String]("name").get)
+      name = doc.getAs[String]("name").get,
+      password = doc.getAs[String]("password").get,
+      createdAt = doc.getAs[DateTime]("createdAt").get)
   }
 
   override def ensureIndexes(implicit db: DB, ec: ExecutionContext) =
