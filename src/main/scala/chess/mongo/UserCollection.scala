@@ -29,6 +29,7 @@ object UserCollection extends MongoCollection[UserId, User] {
       "name" -> value.name,
       "nameLC" -> value.name.toLowerCase,
       "password" -> value.password,
+      "displayName" -> value.displayName,
       "createdAt" -> value.createdAt)
   }
 
@@ -37,6 +38,7 @@ object UserCollection extends MongoCollection[UserId, User] {
       id = doc.getAs[UserId]("_id").get,
       name = doc.getAs[String]("name").get,
       password = doc.getAs[String]("password").get,
+      displayName = doc.getAs[String]("displayName"),
       createdAt = doc.getAs[DateTime]("createdAt").get)
   }
 

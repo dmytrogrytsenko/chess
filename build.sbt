@@ -15,8 +15,6 @@ resolvers ++= Seq(
 
 libraryDependencies ++= {
   val akkaVersion = "2.4.2"
-  val logbackVersion = "1.1.5"
-  val configVersion = "1.3.0"
   Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
@@ -25,13 +23,13 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaVersion,
     "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
     "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
-    "ch.qos.logback" % "logback-classic" % logbackVersion,
-    "com.typesafe" % "config" % configVersion,
+    "ch.qos.logback" % "logback-classic" % "1.1.5",
+    "com.typesafe" % "config" % "1.3.0",
     "org.joda" % "joda-convert" % "1.6",
     "joda-time" % "joda-time" % "2.6",
     "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka23",
     "org.reactivemongo" %% "reactivemongo-extensions-bson" % "0.10.5.0.0.akka23",
-    "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
-    "org.scalatest" %% "scalatest" % "2.2.6"
+    "org.scalatest" %% "scalatest" % "2.2.6",
+    "com.typesafe.akka" %% "akka-testkit" % akkaVersion
   )
 }

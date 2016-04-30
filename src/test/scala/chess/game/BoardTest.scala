@@ -1,9 +1,9 @@
 package chess.game
 
+import chess.TestBase
 import chess.game.Pieces._
-import org.scalatest.{Matchers, FlatSpec}
 
-class BoardTest extends FlatSpec with Matchers {
+class BoardTest extends TestBase {
 
   behavior of "Board.empty"
 

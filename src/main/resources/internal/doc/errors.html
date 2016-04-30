@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Chess</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='http://fonts.googleapis.com/css?family=Chicle&subset=latin' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Mono&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="container">
+    <div id="logo">Chess</div>
+    <div id="slogan">play and enjoy</div>
+    <hr/>
+    <h1>Chess REST API Documentation</h1>
+    <h2>Error Codes & Responses</h2>
+
+    <h3>Response</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th width="20%" colspan="2">Status</th>
+            <th width="15%">Code</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><span class="label label-success">200</span></td>
+            <td>OK</td>
+            <td>&nbsp;</td>
+            <td>The operation is performed successfully.</td>
+        </tr>
+        <tr>
+            <td><span class="label label-danger">409</span></td>
+            <td>Conflict</td>
+            <td><button type="button" class="btn btn-link btn-xs">USER_ALREADY_EXISTS</button></td>
+            <td>User already exists.</td>
+        </tr>
+        <tr>
+            <td rowspan="2"><span class="label label-danger">500</span></td>
+            <td rowspan="2">Internal Server Error</td>
+            <td><button type="button" class="btn btn-link btn-xs">INTERNAL_SERVER_ERROR</button></td>
+            <td>There was an internal server error.</td>
+        </tr>
+        <tr>
+            <td><button type="button" class="btn btn-link btn-xs">TIMEOUT</button></td>
+            <td>The request processing is timed out.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Response body</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th width="1%">Name</th>
+            <th width="10%">Type</th>
+            <th width="1%">Necessity</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>status</td>
+            <td>Int</td>
+            <td>Required</td>
+            <td>HTTP status code.</td>
+            <td><samp>"status": 404</samp></td>
+        </tr>
+        <tr>
+            <td>code</td>
+            <td>String</td>
+            <td>Required</td>
+            <td>The error code.</td>
+            <td><samp>"code": "USER_NOT_FOUND"</samp></td>
+        </tr>
+        <tr>
+            <td>message</td>
+            <td>String</td>
+            <td>Required</td>
+            <td>The error message.</td>
+            <td><samp>"message": "User not found."</samp></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Example of response body</h3>
+<pre>{
+    "status": 404,
+    "code": "USER_NOT_FOUND",
+    "message": "User not found."
+}</pre>
+
+</div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>

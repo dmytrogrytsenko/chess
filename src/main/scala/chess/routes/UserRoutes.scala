@@ -8,13 +8,11 @@ import chess.rest.Routes
 
 trait UserRoutes extends Routes {
   val userRoutes =
-    pathPrefix("users") {
-      path("register") {
-        post {
-          entity(as[UserRegistrationData]) { data =>
-            complete {
-              RegisterUserController.props(data).execute[(StatusCode, UserRegistrationResult)]
-            }
+    path("register") {
+      post {
+        entity(as[UserRegistrationData]) { data =>
+          complete {
+            RegisterUserController.props(data).execute[(StatusCode, UserRegistrationResult)]
           }
         }
       }

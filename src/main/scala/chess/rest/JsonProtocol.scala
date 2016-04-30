@@ -42,7 +42,7 @@ trait JsonProtocol extends DefaultJsonProtocol {
   }
 
   implicit val jsonErrorResult = jsonFormat3(ErrorResult.apply)
-  implicit val jsonUserRegistrationData = jsonFormat2(UserRegistrationData.apply)
-  implicit val jsonUserRegistrationResult = jsonFormat3(UserRegistrationResult.apply)
+  implicit val jsonUserRegistrationData = jsonFormat3(UserRegistrationData.apply)
+  implicit val jsonUserRegistrationResult = jsonFormat4(UserRegistrationResult.apply)
 
 }

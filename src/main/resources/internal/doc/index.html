@@ -14,17 +14,49 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
-    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div class="container">
     <div id="logo">Chess</div>
     <div id="slogan">play and enjoy</div>
     <hr/>
-    <h1>Internal</h1>
-    <a href="doc/index.html">REST API Documentation</a>
+    <h1>Chess REST API Documentation</h1>
+
+    <a href="errors.html">Error Codes & Responses</a>
+
+    <h3>User operations</h3>
+    <table class="table table-bordered">
+        <tr>
+            <th width="1%">Method</th>
+            <th width="1%">Resource</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><span class="label label-primary">POST</span></td>
+            <td><a href="register.html">/register</a></td>
+            <td>Register new user.</td>
+        </tr>
+        <tr>
+            <td><span class="label label-primary">POST</span></td>
+            <td><a href="login.html">/login</a></td>
+            <td>Login the user.</td>
+        </tr>
+        <tr>
+            <td><span class="label label-primary">POST</span></td>
+            <td><a href="logout.html">/logout</a></td>
+            <td>Logout the user.</td>
+        </tr>
+        <tr>
+            <td><span class="label label-success">GET</span></td>
+            <td><a href="get_profile.html">/profile</a></td>
+            <td>Return the user profile information.</td>
+        </tr>
+    </table>
+
 </div>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
+
 </html>

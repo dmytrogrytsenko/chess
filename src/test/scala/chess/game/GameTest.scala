@@ -1,13 +1,12 @@
 package chess.game
 
 import chess.game.Pieces._
-import chess.TestHelpers
+import chess.TestBase
 import org.joda.time.DateTime
-import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.duration._
 
-class GameTest extends FlatSpec with Matchers with TestHelpers {
+class GameTest extends TestBase {
 
   behavior of "Game.create"
 

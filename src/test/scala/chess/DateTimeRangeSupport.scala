@@ -6,7 +6,7 @@ import org.scalatest.Matchers
 
 import scala.concurrent.duration.FiniteDuration
 
-trait TestHelpers extends Matchers {
+trait DateTimeRangeSupport extends Matchers {
   implicit class DateTimeRangeOperations(instance: DateTime) {
     def +-(tolerance: FiniteDuration) = (instance - tolerance) -> (instance + tolerance)
     def shouldBeInRange(range: (DateTime, DateTime)) = {
