@@ -2,7 +2,7 @@ package chess.rest
 
 import akka.http.scaladsl.model.StatusCode
 import chess.domain.Identifiers._
-import chess.domain.{UserRegistrationResult, UserRegistrationData}
+import chess.domain._
 import chess.rest.Errors.ErrorResult
 import org.joda.time.{DateTimeZone, DateTime}
 import org.joda.time.format.ISODateTimeFormat
@@ -16,7 +16,7 @@ trait JsonProtocol extends DefaultJsonProtocol {
   //}
 
   implicit object DateTimeJsonFormat extends RootJsonFormat[DateTime] {
-    private lazy val format = ISODateTimeFormat.dateTimeNoMillis()
+    private lazy val format = ISODateTimeFormat.dateTime()
     def read(json: JsValue): DateTime = json match {
       case JsString(x) => format.parseDateTime(x)
       case x => deserializationError("Expected DateTime as JsString, but got " + x)
@@ -36,13 +36,25 @@ trait JsonProtocol extends DefaultJsonProtocol {
   implicit object UserIdJsonFormat extends JsonFormat[UserId] {
     def read(json: JsValue): UserId = json match {
       case JsString(value) => value.toUserId
-      case _ => throw new DeserializationException("Expected ProjectId as JsString")
+      case _ => throw new DeserializationException("Expected UserId as JsString")
     }
     def write(value: UserId): JsValue = JsString(value)
   }
 
+  implicit object TokenJsonFormat extends JsonFormat[Token] {
+    def read(json: JsValue): Token = json match {
+      case JsString(value) => value.toToken
+      case _ => throw new DeserializationException("Expected Token as JsString")
+    }
+    def write(value: Token): JsValue = JsString(value)
+  }
+
   implicit val jsonErrorResult = jsonFormat3(ErrorResult.apply)
-  implicit val jsonUserRegistrationData = jsonFormat3(UserRegistrationData.apply)
-  implicit val jsonUserRegistrationResult = jsonFormat4(UserRegistrationResult.apply)
+  implicit val jsonUserData = jsonFormat4(UserData.apply)
+  implicit val jsonRegisterData = jsonFormat3(RegisterData.apply)
+  implicit val jsonRegisterResult = jsonFormat1(RegisterResult.apply)
+  implicit val jsonLoginData = jsonFormat2(LoginData.apply)
+  implicit val jsonLoginResult = jsonFormat2(LoginResult.apply)
+  implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
 
 }

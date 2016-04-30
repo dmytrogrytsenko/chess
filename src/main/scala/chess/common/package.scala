@@ -4,14 +4,12 @@ import java.util.UUID
 import java.util.concurrent.{TimeoutException, TimeUnit}
 
 import akka.actor._
-import akka.pattern.ask
 import akka.util.Timeout
 import chess.common.Messages.Start
 import org.joda.time.DateTime
 
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Future, ExecutionContext, Await}
-import scala.reflect.ClassTag
 import scala.util.Failure
 
 package object common {
@@ -39,6 +37,13 @@ package object common {
     def max(operand: DateTime): DateTime = if (self > operand) self else operand
   }
 
+  def normalizeAskResult(msg: Any): Future[Any] = msg match {
+    case Failure(exception) => Future.failed(exception)
+    case Status.Failure(exception) => Future.failed(exception)
+    case ReceiveTimeout => Future.failed(new TimeoutException())
+    case result => Future.successful(result)
+  }
+
   implicit class RichFuture[T](val future: Future[T]) {
     def await(implicit timeout: Timeout) = Await.result(future, timeout.duration)
 
@@ -59,19 +64,6 @@ package object common {
       val actor = context.actorOf(props, name)
       actor ! Start
       actor
-    }
-
-    def execute[T](implicit tag: ClassTag[T],
-                   context: ActorContext,
-                   executionContext: ExecutionContext,
-                   timeout: Timeout): Future[T] =
-      (context.actorOf(props) ? Start flatMap normalizeAskResult).mapTo[T]
-
-    private def normalizeAskResult(msg: Any): Future[Any] = msg match {
-      case Failure(exception) => Future.failed(exception)
-      case Status.Failure(exception) => Future.failed(exception)
-      case ReceiveTimeout => Future.failed(new TimeoutException())
-      case result => Future.successful(result)
     }
   }
 

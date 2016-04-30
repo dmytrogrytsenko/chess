@@ -1,6 +1,5 @@
 package chess.rest
 
-import akka.http.scaladsl.model.StatusCode
 import chess.common.actors.SingleUseActor
 import chess.rest.Errors.{ErrorResult, RestException}
 

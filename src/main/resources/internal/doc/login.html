@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
-    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -28,7 +28,7 @@
     <p>Login the user.</p>
 
     <h3>Request</h3>
-    <samp>POST http://your-it.com.ua:8888/login</samp><br/>
+    <samp>POST http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/login</samp><br/>
 
     <h3>Request body</h3>
     <table class="table table-bordered">
@@ -43,14 +43,11 @@
         </thead>
         <tbody>
         <tr>
-            <td>login</td>
+            <td>name</td>
             <td>String</td>
             <td>Required</td>
-            <td>The user name or email.</td>
-            <td>
-                <samp><span class="text-info">"login"</span>: <span class="text-danger">"janedoe"</span></samp><br/>
-                <samp><span class="text-info">"login"</span>: <span class="text-danger">"jane.doe@gmail.com"</span></samp>
-            </td>
+            <td>The user name.</td>
+            <td><samp><span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span></samp><br/></td>
         </tr>
         <tr>
             <td>password</td>
@@ -62,9 +59,9 @@
         </tbody>
     </table>
     <h3>Example of request</h3>
-    <pre>POST http://your-it.com.ua:8888/login
+    <pre>POST http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/login
 {
-    <span class="text-info">"login"</span>: <span class="text-danger">"janedoe"</span>,
+    <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
     <span class="text-info">"password"</span>: <span class="text-danger">"Ae71bags&534"</span>
 }</pre>
 
@@ -91,7 +88,7 @@
             <td>
                 <p>The request content validation is failed:</p>
                 <il>
-                    <li>Required member 'login' is empty.</li>
+                    <li>Required member 'name' is empty.</li>
                     <li>Required member 'password' is empty.</li>
                 </il>
             </td>
@@ -126,12 +123,25 @@
             <td>The authorization token.</td>
             <td><samp><span class="text-info">"token"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span></samp></td>
         </tr>
+        <tr>
+            <td>user</td>
+            <td><a href="UserData.html">UserData</td></td>
+            <td>Required</td>
+            <td>The user information.</td>
+            <td><samp><span class="text-info">"user"</span>: { ... }</samp></td>
+        </tr>
         </tbody>
     </table>
 
     <h3>Example of response body</h3>
 <pre>{
-    <span class="text-info">"token"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>
+    <span class="text-info">"token"</span>: <span class="text-danger">"53403b52-ecb4-418e-a862-c64f6ab36106"</span>,
+    <span class="text-info">"user"</span>: {
+        <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+        <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+        <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+        <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>
+    }
 }</pre>
 
 </div>

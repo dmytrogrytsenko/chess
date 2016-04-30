@@ -41,6 +41,22 @@
             <td>The operation is performed successfully.</td>
         </tr>
         <tr>
+            <td><span class="label label-danger">400</span></td>
+            <td>Bad Request</td>
+            <td><button type="button" class="btn btn-link btn-xs">VALIDATION</button></td>
+            <td>The request content validation is failed.</td>
+        </tr>
+        <tr>
+            <td rowspan="2"><span class="label label-danger">401</span></td>
+            <td rowspan="2">Unauthorized</td>
+            <td><button type="button" class="btn btn-link btn-xs">CREDENTIALS_MISSING</button></td>
+            <td>The resource requires authentication, which was not supplied with the request.</td>
+        </tr>
+        <tr>
+            <td><button type="button" class="btn btn-link btn-xs">CREDENTIALS_REJECTED</button></td>
+            <td>The supplied authentication is invalid.</td>
+        </tr>
+        <tr>
             <td><span class="label label-danger">409</span></td>
             <td>Conflict</td>
             <td><button type="button" class="btn btn-link btn-xs">USER_ALREADY_EXISTS</button></td>

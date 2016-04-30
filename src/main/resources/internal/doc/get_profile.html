@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 
-    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -28,7 +28,7 @@
     <p>Return the user profile information.</p>
 
     <h3>Request</h3>
-    <samp>GET http://your-it.com.ua:8888/profile</samp><br/>
+    <samp>POST http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/profile</samp><br/>
 
     <h3>Request header</h3>
     <table class="table table-bordered">
@@ -49,7 +49,7 @@
     </table>
 
     <h3>Example of request</h3>
-<pre>GET http://your-it.com.ua:8888/profile
+<pre>POST http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/profile
 Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
 
     <h3>Response</h3>
@@ -96,58 +96,23 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
         </thead>
         <tbody>
         <tr>
-            <td>userId</td>
-            <td>String</td>
+            <td>user</td>
+            <td><a href="UserData.html">UserData</a></td>
             <td>Required</td>
-            <td>The unique identifier of the user.</td>
-            <td><samp><span class="text-info">"id"</span>: <span class="text-danger">"98b1def7-e6dd-44e5-a369-54144f5a4232"</span></samp></td>
-        </tr>
-        <tr>
-            <td>username</td>
-            <td>String</td>
-            <td>Required</td>
-            <td>The name of the user.</td>
-            <td><samp><span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span></samp></td>
-        </tr>
-        <tr>
-            <td>email</td>
-            <td>String</td>
-            <td>Required</td>
-            <td>The email of the user.</td>
-            <td><samp><span class="text-info">"email"</span>: <span class="text-danger">"jane.doe@gmail.com"</span></samp></td>
-        </tr>
-        <tr>
-            <td>firstName</td>
-            <td>String</td>
-            <td>Optional</td>
-            <td>The first name of the user.</td>
-            <td><samp><span class="text-info">"firstName"</span>: <span class="text-danger">"Jane"</span></samp></td>
-        </tr>
-        <tr>
-            <td>lastName</td>
-            <td>String</td>
-            <td>Optional</td>
-            <td>The last name of the user.</td>
-            <td><samp><span class="text-info">"lastName"</span>: <span class="text-danger">"Doe"</span></samp></td>
-        </tr>
-        <tr>
-            <td>company</td>
-            <td>String</td>
-            <td>Optional</td>
-            <td>The company of the user.</td>
-            <td><samp><span class="text-info">"company"</span>: <span class="text-danger">"Good Corporation"</span></samp></td>
+            <td>The user information.</td>
+            <td><samp><span class="text-info">"user"</span>: <span class="text-danger">{ ... }</span></samp></td>
         </tr>
         </tbody>
     </table>
 
     <h3>Example of response body</h3>
 <pre>{
-    <span class="text-info">"id"</span>: <span class="text-danger">"98b1def7-e6dd-44e5-a369-54144f5a4232"</span>,
-    <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
-    <span class="text-info">"email"</span>: <span class="text-danger">"jane.doe@gmail.com"</span>,
-    <span class="text-info">"firstName"</span>: <span class="text-danger">"Jane"</span>,
-    <span class="text-info">"lastName"</span>: <span class="text-danger">"Doe"</span>,
-    <span class="text-info">"company"</span>: <span class="text-danger">"Good Corporation"</span>
+    <span class="text-info">"user"</span>: {
+        <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+        <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+        <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+        <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>
+    }
 }</pre>
 
 </div>

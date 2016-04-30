@@ -6,7 +6,7 @@ import akka.stream.Materializer
 import akka.testkit.TestKitBase
 import akka.util.Timeout
 import chess.common._
-import chess.domain.UserRegistrationData
+import chess.domain.RegisterData
 import chess.rest.Errors.{RestException, ErrorResult}
 import chess.rest.JsonProtocol
 import org.scalatest.Matchers
@@ -24,7 +24,7 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
   val baseUrl = "http://localhost:10080/api"
 
   object Rest {
-    def register(data: UserRegistrationData) = HttpRequest()
+    def register(data: RegisterData) = HttpRequest()
       .withMethod(HttpMethods.POST)
       .withUri(s"$baseUrl/register")
       .withEntity(ContentTypes.`application/json`, data.toJson.prettyPrint)
@@ -36,7 +36,7 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
   }
 
   implicit class RichHttpResponse(response: HttpResponse) {
-    def body = response.entity.toStrict(5.seconds).await.data.decodeString("UTF-8")
+    def body = response.entity.toStrict(5.seconds).await.data.utf8String
   }
 
   implicit class ResponseJsonParsers(response: HttpResponse) {

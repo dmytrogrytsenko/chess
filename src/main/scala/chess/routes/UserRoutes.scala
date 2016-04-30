@@ -1,18 +1,61 @@
 package chess.routes
 
-import akka.http.scaladsl.model.StatusCode
-import chess.common._
-import chess.controllers.RegisterUserController
-import chess.domain.{UserRegistrationResult, UserRegistrationData}
+import chess.common.Messages.Done
+import chess.controllers.{LogoutController, LoginController, RegisterController, GetProfileController}
+import chess.domain._
+import chess.rest.Errors.BadRequest
 import chess.rest.Routes
 
 trait UserRoutes extends Routes {
-  val userRoutes =
+  val userRoutes = registerRoute ~ loginRoute ~ logoutRoute ~ profileRoute
+
+  def registerRoute =
     path("register") {
       post {
-        entity(as[UserRegistrationData]) { data =>
+        entity(as[RegisterData]) { data =>
+          validate(data.name.nonEmpty, BadRequest.Validation.requiredMemberEmpty("name").message) {
+            validate(data.password.nonEmpty, BadRequest.Validation.requiredMemberEmpty("password").message) {
+              complete {
+                RegisterController.props(data).execute[RegisterResult]
+              }
+            }
+          }
+        }
+      }
+    }
+
+  def loginRoute =
+    path("login") {
+      post {
+        entity(as[LoginData]) { data =>
+          validate(data.name.nonEmpty, BadRequest.Validation.requiredMemberEmpty("name").message) {
+            validate(data.password.nonEmpty, BadRequest.Validation.requiredMemberEmpty("password").message) {
+              complete {
+                LoginController.props(data).execute[LoginResult]
+              }
+            }
+          }
+        }
+      }
+    }
+
+  def logoutRoute =
+    path("logout") {
+      post {
+        authenticate(tokenAuthenticator) { token =>
           complete {
-            RegisterUserController.props(data).execute[(StatusCode, UserRegistrationResult)]
+            LogoutController.props(token).execute[Done].map(_ => "")
+          }
+        }
+      }
+    }
+
+  def profileRoute =
+    path("profile") {
+      get {
+        authenticate(userAuthenticator) { userId =>
+          complete {
+            GetProfileController.props(userId).execute[ProfileResult]
           }
         }
       }

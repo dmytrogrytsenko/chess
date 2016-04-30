@@ -11,25 +11,13 @@ import chess.common.actors.BaseActor
 import chess.rest.Errors.{InternalServerError, RestException}
 import chess.settings.EndpointSettings
 
-trait RestService extends Routes {
+trait RestService extends Routes with Jasonify {
   def settings: EndpointSettings
   def routes: Route
 
   implicit val materializer = ActorMaterializer()
 
   def receive = {
-    case Start =>
-      Http(context.system).bindAndHandle(handler, settings.interface, settings.port)
-  }
-
-  def handler = handleExceptions(exceptionHandler)(routes)
-
-  val exceptionHandler = ExceptionHandler {
-    case e: RestException =>
-      log.error(e, e.result.message)
-      complete(e.result.status -> e.result)
-    case e: AskTimeoutException =>
-      log.error(e, InternalServerError.timeout.message)
-      complete(InternalServerError.timeout.status -> InternalServerError.timeout)
+    case Start => Http(context.system).bindAndHandle(routes, settings.interface, settings.port)
   }
 }

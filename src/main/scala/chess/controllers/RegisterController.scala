@@ -1,18 +1,18 @@
 package chess.controllers
 
 import akka.actor.Props
-import akka.http.scaladsl.model.StatusCodes
 import chess.common.Messages.Start
-import chess.domain.{UserRegistrationResult, User, UserRegistrationData}
+import chess.domain.{User, UserData, RegisterResult, RegisterData}
 import chess.repositories.UserRepository
 import chess.repositories.UserRepository.{UserAlreadyExists, UserAdded, AddUser}
 import chess.rest.Controller
 import chess.rest.Errors.Conflict
 
-object RegisterUserController {
-  def props(data: UserRegistrationData) = Props(classOf[RegisterUserController], data)
+object RegisterController {
+  def props(data: RegisterData) = Props(classOf[RegisterController], data)
 }
-class RegisterUserController(data: UserRegistrationData) extends Controller {
+
+class RegisterController(data: RegisterData) extends Controller {
   def receive = {
     case Start =>
       val user = User(data)
@@ -21,7 +21,7 @@ class RegisterUserController(data: UserRegistrationData) extends Controller {
   }
 
   def waitingForUserAdded(user: User): Receive = {
-    case UserAdded(user.id) => complete(StatusCodes.OK -> UserRegistrationResult(user))
+    case UserAdded(user.id) => complete(RegisterResult(UserData(user)))
     case UserAlreadyExists(user.id) => failure(Conflict.userAlreadyExists(user.name))
   }
 }

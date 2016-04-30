@@ -119,42 +119,23 @@
         </thead>
         <tbody>
         <tr>
-            <td>id</td>
-            <td>String</td>
+            <td>user</td>
+            <td><a href="UserData.html">UserData</a></td>
             <td>Required</td>
-            <td>The unique identifier of the user.</td>
-            <td><samp><span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span></samp></td>
-        </tr>
-        <tr>
-            <td>name</td>
-            <td>String</td>
-            <td>Required</td>
-            <td>The user name.</td>
-            <td><samp><span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span></samp></td>
-        </tr>
-        <tr>
-            <td>displayName</td>
-            <td>String</td>
-            <td>Optional</td>
-            <td>The display user name.</td>
-            <td><samp><span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span></samp></td>
-        </tr>
-        <tr>
-            <td>createdAt</td>
-            <td>DateTime</td>
-            <td>Required</td>
-            <td>The user creation date and time in UTC.</td>
-            <td><samp><span class="text-info">"createdAt"</span>: <span class="text-danger">"..."</span></samp></td>
+            <td>The user information.</td>
+            <td><samp><span class="text-info">"user"</span>: <span class="text-danger">{ ... }</span></samp></td>
         </tr>
         </tbody>
     </table>
 
     <h3>Example of response body</h3>
 <pre>{
-    <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
-    <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
-    <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
-    <span class="text-info">"createdAt"</span>: <span class="text-danger">""</span>
+    <span class="text-info">"user"</span>: {
+        <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+        <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+        <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+        <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>
+    }
 }</pre>
 
 </div>

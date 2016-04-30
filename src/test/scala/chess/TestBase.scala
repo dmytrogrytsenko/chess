@@ -14,6 +14,7 @@ abstract class TestBase
   extends TestKit(ActorSystem("test"))
   with FlatSpecLike
   with Matchers
+  with EntityBuilders
   with DateTimeRangeSupport
   with RestSupport
   with MongoSupport {
