@@ -1,7 +1,7 @@
 package chess
 
 import chess.common._
-import chess.domain.RegisterData
+import chess.domain.{LoginData, RegisterData}
 
 trait EntityBuilders {
 
@@ -12,4 +12,7 @@ trait EntityBuilders {
                         displayName: Option[String] = Some(randomString)) =
     RegisterData(name, password, displayName)
 
+  def buildLoginData(name: String = randomString,
+                     password: String = randomString) =
+    LoginData(name, password)
 }

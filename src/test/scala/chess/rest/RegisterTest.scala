@@ -3,7 +3,7 @@ package chess.rest
 import chess.TestBase
 import chess.common._
 import chess.domain.{User, RegisterResult, RegisterData}
-import chess.rest.Errors.BadRequest
+import chess.rest.Errors.{Conflict, BadRequest}
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -14,7 +14,7 @@ class RegisterTest extends TestBase {
 
   it should "create new project" in {
     //arrange
-    val data = RegisterData(name = newUUID, password = newUUID, displayName = Some(newUUID))
+    val data = buildRegisterData()
     //act
     val result = Rest.register(data).to[RegisterResult]
     //assert
@@ -30,29 +30,30 @@ class RegisterTest extends TestBase {
 
   it should "return 400 (Bad Request) VALIDATION if name is empty" in {
     //arrange
-    val user = Mongo.addUser()
-    val session = Mongo.addSession(userId = user.id)
-    //act
     val data = buildRegisterData(name = "")
+    //act
     val result = Rest.register(data).toErrorResult
     //assert
     result should be (BadRequest.Validation.requiredMemberEmpty("name"))
-    //cleanup
-    Mongo.removeUser(user.id)
-    Mongo.removeSession(session.token)
   }
 
   it should "return 400 (Bad Request) VALIDATION if password is empty" in {
     //arrange
-    val user = Mongo.addUser()
-    val session = Mongo.addSession(userId = user.id)
-    //act
     val data = buildRegisterData(password = "")
+    //act
     val result = Rest.register(data).toErrorResult
     //assert
     result should be (BadRequest.Validation.requiredMemberEmpty("password"))
+  }
+
+  it should "return 409 (Conflict) USER_ALREADY_EXISTS if user already exists" in {
+    //arrange
+    val user = Mongo.addUser()
+    //act
+    val data = buildRegisterData(name = user.name)
+    val result = Rest.register(data).toErrorResult
+    //assert
+    result should be (Conflict.userAlreadyExists(user.name))
     //cleanup
-    Mongo.removeUser(user.id)
-    Mongo.removeSession(session.token)
   }
 }
