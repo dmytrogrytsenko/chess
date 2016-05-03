@@ -6,6 +6,7 @@ import akka.stream.Materializer
 import akka.testkit.TestKit
 import akka.util.Timeout
 import chess.common._
+import chess.domain.{LoginResult, LoginData, User}
 import org.scalatest.{FlatSpecLike, Matchers}
 
 import scala.concurrent.duration._
@@ -23,6 +24,8 @@ abstract class TestBase
   implicit val timeout: Timeout = Timeout(5.seconds)
 
   sys.addShutdownHook(system.terminate().await)
+
+  def loginUser(user: User) = Rest.login(LoginData(user.name, user.password)).to[LoginResult].token
 }
 
 

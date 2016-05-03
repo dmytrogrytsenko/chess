@@ -2,10 +2,12 @@ package chess
 
 import chess.common._
 import chess.domain.{LoginData, RegisterData}
+import chess.domain.Identifiers._
 
 trait EntityBuilders {
 
   def randomString = newUUID
+  def randomToken = newUUID.toToken
 
   def buildRegisterData(name: String = randomString,
                         password: String = randomString,

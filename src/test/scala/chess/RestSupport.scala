@@ -2,11 +2,13 @@ package chess
 
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers.{GenericHttpCredentials, Authorization}
 import akka.stream.Materializer
 import akka.testkit.TestKitBase
 import akka.util.Timeout
 import chess.common._
-import chess.domain.{LoginData, RegisterData}
+import chess.domain.Identifiers.Token
+import chess.domain.{LoginResult, User, LoginData, RegisterData}
 import chess.rest.Errors.{RestException, ErrorResult}
 import chess.rest.JsonProtocol
 import org.scalatest.Matchers
@@ -35,6 +37,18 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
       .withUri(s"$baseUrl/login")
       .withEntity(ContentTypes.`application/json`, data.toJson.prettyPrint)
       .execute
+
+    def logout(token: Token) = HttpRequest()
+      .withMethod(HttpMethods.POST)
+      .withUri(s"$baseUrl/logout")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
+    def getProfile(token: Token) = HttpRequest()
+      .withMethod(HttpMethods.GET)
+      .withUri(s"$baseUrl/profile")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
   }
 
   implicit class RichHttpRequest(request: HttpRequest) {
@@ -55,6 +69,8 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
       }
       response.body.parseJson.convertTo[T]
     }
+
+    def shouldBeOK() = response.status shouldBe StatusCodes.OK
 
     def toErrorResult = {
       val result = response.body.parseJson.convertTo[ErrorResult]

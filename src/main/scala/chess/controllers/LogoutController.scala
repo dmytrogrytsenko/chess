@@ -17,3 +17,4 @@ class LogoutController(token: Token) extends Controller {
     case SessionRemoved(`token`) => complete(Done)
   }
 }
+

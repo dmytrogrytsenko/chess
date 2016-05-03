@@ -46,7 +46,7 @@ trait Routes extends BaseActor with Directives with JsonProtocol with SprayJsonS
 
   def tokenAuthenticator(credentials: Option[HttpCredentials]): Future[AuthenticationResult[Token]] = {
     credentials match {
-      case Some(c) => FastFuture.successful(AuthenticationResult.success(c.token().toToken))
+      case Some(c) => FastFuture.successful(AuthenticationResult.success(c.value.toToken))
       case None => FastFuture.successful(AuthenticationResult.failWithChallenge(challenge))
     }
   }
