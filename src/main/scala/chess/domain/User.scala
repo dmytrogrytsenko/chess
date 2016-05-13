@@ -28,6 +28,8 @@ object UserData {
       name = user.name,
       displayName = user.displayName,
       createdAt = user.createdAt)
+
+  def unknown(userId: UserId) = UserData(userId, "unknown", Some("Unknown"), DateTime.now)
 }
 
 case class RegisterData(name: String, password: String, displayName: Option[String])

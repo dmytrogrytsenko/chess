@@ -8,6 +8,8 @@ import chess.domain.Session
 import chess.mongo.SessionCollection
 import reactivemongo.api.DB
 
+import scala.concurrent.duration.FiniteDuration
+
 object SessionRepository extends NodeSingleton1[SessionRepository, DB] {
   case class AddSession(session: Session)
   case class SessionAdded(token: Token)
@@ -21,6 +23,9 @@ object SessionRepository extends NodeSingleton1[SessionRepository, DB] {
 
   case class Activity(token: Token)
   case class ActivityCompleted(token: Token)
+
+  case class GetOnlineSessions(timeout: FiniteDuration)
+  case class OnlineSessions(sessions: List[Session])
 }
 
 class SessionRepository(implicit val db: DB) extends BaseActor {
@@ -45,8 +50,9 @@ class SessionRepository(implicit val db: DB) extends BaseActor {
       } pipeTo sender()
 
     case Activity(token) =>
-      activity(token) map { _ =>
-        ActivityCompleted(token)
-      } pipeTo sender()
+      activity(token) map (_ => ActivityCompleted(token)) pipeTo sender()
+
+    case GetOnlineSessions(timeout) =>
+      getOnlineSessions(timeout) map OnlineSessions.apply pipeTo sender()
   }
 }

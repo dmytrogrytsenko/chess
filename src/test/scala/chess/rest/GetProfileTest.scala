@@ -1,7 +1,8 @@
 package chess.rest
 
 import chess.TestBase
-import chess.domain.{UserData, ProfileResult}
+import chess.domain.Identifiers.Token
+import chess.domain.{ProfileResult, UserData}
 import chess.rest.Errors.Unauthorized
 
 class GetProfileTest extends TestBase {
@@ -23,7 +24,7 @@ class GetProfileTest extends TestBase {
 
   it should "return 401 (Unauthorized) CREDENTIALS_REJECTED if token is incorrect" in {
     //act
-    val result = Rest.getProfile(randomToken).toErrorResult
+    val result = Rest.getProfile(Token.generate()).toErrorResult
     //assert
     result should be (Unauthorized.credentialsRejected)
   }

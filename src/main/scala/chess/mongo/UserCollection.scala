@@ -47,6 +47,9 @@ object UserCollection extends MongoCollection[UserId, User] {
       Index(Seq("nameLC" -> IndexType.Ascending), unique = true)
     ) map items.indexesManager.ensure).map(_ => {})
 
-  def findUserByName(username: String)(implicit db: DB, ec: ExecutionContext): Future[Option[User]] =
-    items.find($doc("nameLC" -> username.toLowerCase)).one[User]
+  def findUserByName(name: String)(implicit db: DB, ec: ExecutionContext): Future[Option[User]] =
+    items.find($doc("nameLC" -> name.toLowerCase)).one[User]
+
+  def getUsers(userIds: Set[UserId])(implicit db: DB, ec: ExecutionContext): Future[List[User]] =
+    items.find($doc("_id" $in (userIds.toSeq: _*))).cursor[User].collect[List]()
 }

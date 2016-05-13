@@ -2,6 +2,7 @@ package chess.game
 
 import chess.game.Pieces._
 import chess.TestBase
+import chess.domain.Identifiers.Version
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._

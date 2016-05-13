@@ -18,7 +18,7 @@ package object common {
 
   def newUUID = UUID.randomUUID().toString
 
-  implicit class PipedObject[T](value: T) {
+  implicit class PipedObject[T](val value: T) extends AnyVal {
     def |>[R](f: T => R) = f(this.value)
     def pipe[R](f: T => R) = |>(f)
   }

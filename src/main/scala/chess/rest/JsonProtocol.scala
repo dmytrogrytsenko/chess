@@ -1,19 +1,18 @@
 package chess.rest
 
 import akka.http.scaladsl.model.StatusCode
+import akka.http.scaladsl.unmarshalling.PredefinedFromStringUnmarshallers
 import chess.domain.Identifiers._
 import chess.domain._
 import chess.rest.Errors.ErrorResult
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.ISODateTimeFormat
 import spray.json._
 
-trait JsonProtocol extends DefaultJsonProtocol {
+trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarshallers {
   //val UserIdSegment: PathMatcher1[UserId] = Segment.map(_.toUserId)
 
-  //implicit val UserIdDeserializer = new FromStringDeserializer[UserId] {
-  //  def apply(value: String): Either[DeserializationError, UserId] = Right(value.toUserId)
-  //}
+  implicit val versionFromStringUnmarshaller = intFromStringUnmarshaller.map(_.toVersion)
 
   implicit object DateTimeJsonFormat extends RootJsonFormat[DateTime] {
     private lazy val format = ISODateTimeFormat.dateTime()
@@ -31,6 +30,15 @@ trait JsonProtocol extends DefaultJsonProtocol {
       case JsNumber(x) => StatusCode.int2StatusCode(x.toInt)
       case x => deserializationError("Expected StatusCode as JsNumber, but got " + x)
     }
+  }
+
+  implicit object VersionJsonFormat extends JsonFormat[Version] {
+    def read(json: JsValue): Version = json match {
+      case JsNumber(value) if value.isValidInt => value.toInt.toVersion
+      case JsNumber(value) => throw new DeserializationException("Expected Version as valid integer value")
+      case _ => throw new DeserializationException("Expected Version as JsNumber")
+    }
+    def write(value: Version): JsValue = JsNumber(value)
   }
 
   implicit object UserIdJsonFormat extends JsonFormat[UserId] {
@@ -56,5 +64,7 @@ trait JsonProtocol extends DefaultJsonProtocol {
   implicit val jsonLoginData = jsonFormat2(LoginData.apply)
   implicit val jsonLoginResult = jsonFormat2(LoginResult.apply)
   implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
+  implicit val jsonPlayerData = jsonFormat3(PlayerData.apply)
+  implicit val jsonPlayersData = jsonFormat2(PlayersData.apply)
 
 }

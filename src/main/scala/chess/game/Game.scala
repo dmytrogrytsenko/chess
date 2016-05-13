@@ -1,18 +1,11 @@
 package chess.game
 
 import chess.common._
+import chess.domain.Identifiers._
 import org.joda.time.DateTime
 import chess.game.PieceMovements._
 
-case class Version(underlying: Int) extends AnyVal {
-  def next = Version(underlying + 1)
-}
-
-object Version {
-  val initial = Version(1)
-}
-
-case class GameId(underlying: String) extends AnyVal
+case class GameId(underlying: String)
 
 object GameId {
   def generate = GameId(newUUID)

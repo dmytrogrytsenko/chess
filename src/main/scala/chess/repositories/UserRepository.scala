@@ -24,6 +24,9 @@ object UserRepository extends NodeSingleton1[UserRepository, DB] {
   sealed trait FindUserByNameResult
   case class UserFoundByName(user: User) extends FindUserByNameResult
   case class UserNotFoundByName(username: String) extends FindUserByNameResult
+
+  case class GetUsers(userIds: Set[UserId])
+  case class RetrievedUsers(users: List[User])
 }
 
 class UserRepository(implicit val db: DB) extends BaseActor {
@@ -51,5 +54,8 @@ class UserRepository(implicit val db: DB) extends BaseActor {
         case Some(user) => UserFoundByName(user)
         case None => UserNotFoundByName(username)
       } pipeTo sender()
+
+    case GetUsers(userIds) =>
+      getUsers(userIds) map RetrievedUsers.apply pipeTo sender()
   }
 }

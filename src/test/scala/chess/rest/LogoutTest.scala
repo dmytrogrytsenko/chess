@@ -21,6 +21,6 @@ class LogoutTest extends TestBase {
 
   it should "do nothing if token not found" in {
     //act
-    Rest.logout(randomToken).shouldBeOK()
+    Rest.logout(Token.generate()).shouldBeOK()
   }
 }

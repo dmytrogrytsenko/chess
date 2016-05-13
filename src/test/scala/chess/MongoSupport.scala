@@ -3,11 +3,11 @@ package chess
 import akka.util.Timeout
 import chess.common._
 import chess.domain.Identifiers._
-import chess.domain.{Session, User}
+import chess.domain._
 import chess.mongo._
 import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
-import reactivemongo.api.{MongoDriver, DB}
+import reactivemongo.api.{DB, MongoDriver}
 
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,12 +20,29 @@ object MongoSupport {
   lazy val db = connection("chess")
 }
 
-trait MongoSupport {
+trait MongoSupport extends EntityBuilders {
 
   implicit val timeout: Timeout
   implicit val db: DB = MongoSupport.db
 
   object Mongo {
+    def getVersionItem(name: String): Option[VersionItem] = {
+      import VersionCollection.VersionItemReader
+      VersionCollection.get(name).await
+    }
+
+    def addVersionItem(name: String = newUUID,
+                       version: Version = Version.initial.next): VersionItem = {
+      val item = VersionItem(name, version)
+      import VersionCollection.VersionItemWriter
+      VersionCollection.add(item)
+      item
+    }
+
+    def removeVersionItem(name: String) = {
+      VersionCollection.remove(name).await
+    }
+
     def getUser(id: UserId): Option[User] = {
       import UserCollection.UserIdWriter
       import UserCollection.UserReader
@@ -58,11 +75,38 @@ trait MongoSupport {
       session
     }
 
-    def removeSession(token: Token) = SessionCollection.remove(token).await
+    def removeSession(token: Token) = {
+      import SessionCollection.TokenWriter
+      SessionCollection.remove(token).await
+    }
 
     def getSession(token: Token): Option[Session] = {
+      import SessionCollection.TokenWriter
       import SessionCollection.SessionReader
       SessionCollection.get(token).await
+    }
+
+    def getInvitation(id: InvitationId): Option[Invitation] = {
+      import InvitationCollection.InvitationIdWriter
+      import InvitationCollection.InvitationReader
+      InvitationCollection.get(id).await
+    }
+
+    def addInvitation(id: InvitationId = InvitationId.generate(),
+                      inviterId: UserId = UserId.generate(),
+                      inviteeId: UserId = UserId.generate(),
+                      createdAt: DateTime = DateTime.now,
+                      status: InvitationStatus = InvitationStatus.all.randomValue,
+                      completedAt: Option[DateTime] = Some(DateTime.now)): Invitation = {
+      val invitation = Invitation(id, inviterId, inviteeId, createdAt, status, completedAt)
+      import InvitationCollection.InvitationWriter
+      InvitationCollection.add(invitation)
+      invitation
+    }
+
+    def removeInvitation(id: InvitationId) = {
+      import InvitationCollection.InvitationIdWriter
+      InvitationCollection.remove(id).await
     }
 
   }
