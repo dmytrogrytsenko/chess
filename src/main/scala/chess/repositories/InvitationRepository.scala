@@ -8,7 +8,7 @@ import chess.domain.Invitation
 import chess.mongo.InvitationCollection
 import reactivemongo.api.DB
 
-object InvitationRepository extends NodeSingleton1[VersionRepository, DB] {
+object InvitationRepository extends NodeSingleton1[InvitationRepository, DB] {
   case class GetPendingInviters(inviteeId: UserId)
   case class PendingInviters(invitations: List[Invitation])
   case class GetPendingInvitees(inviteeId: UserId)

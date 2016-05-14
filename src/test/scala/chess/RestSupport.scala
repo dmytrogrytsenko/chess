@@ -7,7 +7,7 @@ import akka.stream.Materializer
 import akka.testkit.TestKitBase
 import akka.util.Timeout
 import chess.common._
-import chess.domain.Identifiers.Token
+import chess.domain.Identifiers.{Version, Token}
 import chess.domain.{LoginResult, User, LoginData, RegisterData}
 import chess.rest.Errors.{RestException, ErrorResult}
 import chess.rest.JsonProtocol
@@ -47,6 +47,12 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
     def getProfile(token: Token) = HttpRequest()
       .withMethod(HttpMethods.GET)
       .withUri(s"$baseUrl/profile")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
+    def getPlayers(token: Token, version: Option[Version] = None) = HttpRequest()
+      .withMethod(HttpMethods.GET)
+      .withUri(s"$baseUrl/players${version.map(v => s"?version=$v").getOrElse("")}")
       .withHeaders(Authorization(GenericHttpCredentials(token, "")))
       .execute
   }

@@ -10,7 +10,7 @@ import scala.concurrent.{Future, ExecutionContext}
 
 trait MongoCollection[Key, Entity] extends BsonDsl {
 
-  val writeConcern = GetLastError(fsync = true)
+  val writeConcern = GetLastError(w = Some(BSONInteger(1)), fsync = true)
 
   def name: String
 

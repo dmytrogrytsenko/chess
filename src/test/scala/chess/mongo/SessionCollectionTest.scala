@@ -65,8 +65,10 @@ class SessionCollectionTest extends TestBase {
     //act
     val result = getOnlineSessions(1.minute).await
     //assert
-    result should contain.theSameElementsAs (List(session1, session2))
+    result should contain (session1)
+    result should contain (session2)
+    result should not contain (session3)
     //cleanup
-    List(session1, session2, session3).map(_.token).foreach(Mongo.removeSession)
+    Mongo.removeSessions(session1, session2, session3)
   }
 }

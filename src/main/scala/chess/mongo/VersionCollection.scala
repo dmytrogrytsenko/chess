@@ -12,6 +12,8 @@ object VersionCollection extends MongoCollection[String, VersionItem] {
 
   val name = "versions"
 
+  val players = "players"
+
   implicit object VersionReader extends BSONReader[BSONInteger, Version] {
     def read(bson: BSONInteger): Version = bson.value.toVersion
   }

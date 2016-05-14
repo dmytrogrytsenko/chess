@@ -11,7 +11,7 @@ trait PlayerRoutes extends Routes {
 
   def getPlayers =
     path("players") {
-      parameter("version".as[Option[Version]]) { version =>
+      parameter("version".as[Version] ?) { version =>
         get {
           authenticate(userAuthenticator) { userId => ctx =>
             GetPlayersController.props(userId, version).execute[Option[PlayersData]].flatMap {

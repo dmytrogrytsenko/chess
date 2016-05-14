@@ -4,6 +4,7 @@ import akka.actor.Props
 import chess.common.Messages.Start
 import chess.domain.Identifiers._
 import chess.domain._
+import chess.mongo.VersionCollection._
 import chess.repositories.InvitationRepository.{GetPendingInvitees, GetPendingInviters, PendingInvitees, PendingInviters}
 import chess.repositories.{InvitationRepository, SessionRepository, UserRepository, VersionRepository}
 import chess.repositories.SessionRepository.{GetOnlineSessions, OnlineSessions}
@@ -24,7 +25,7 @@ class GetPlayersController(userId: UserId, version: Option[Version]) extends Con
     case Start =>
       VersionRepository.endpoint ! GetVersion(players)
 
-    case RetrievedVersion(`players`, currentVersion) if currentVersion == version =>
+    case RetrievedVersion(`players`, currentVersion) if version.contains(currentVersion) =>
       complete(Option.empty[PlayersData])
 
     case RetrievedVersion(`players`, currentVersion) =>
@@ -37,7 +38,7 @@ class GetPlayersController(userId: UserId, version: Option[Version]) extends Con
       complete(Some(PlayersData(Nil, currentVersion)))
 
     case OnlineSessions(sessions) =>
-      UserRepository.endpoint ! GetUsers(sessions.map(_.userId).toSet)
+      UserRepository.endpoint ! GetUsers(sessions.map(_.userId).filter(_ != userId).toSet)
       InvitationRepository.endpoint ! GetPendingInviters(userId)
       InvitationRepository.endpoint ! GetPendingInvitees(userId)
       waitForUsers(Data(currentVersion, sessions))
@@ -60,7 +61,7 @@ class GetPlayersController(userId: UserId, version: Option[Version]) extends Con
                   invitees: Option[List[Invitation]] = None) {
     def ready = users.isDefined && inviters.isDefined && invitees.isDefined
 
-    def result = Some(PlayersData(sessions.map(buildPlayerData), currentVersion))
+    def result = Some(PlayersData(sessions.filter(_.userId != userId).map(buildPlayerData), currentVersion))
 
     def buildPlayerData(session: Session) = PlayerData(
       user = users.get.find(_.id == session.userId).map(UserData.apply).getOrElse(UserData.unknown(session.userId)),

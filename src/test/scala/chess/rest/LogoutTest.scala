@@ -10,11 +10,11 @@ class LogoutTest extends TestBase {
   it should "logout the user" in {
     //arrange
     val user = Mongo.addUser()
-    val token = loginUser(user)
+    val session = Mongo.addSession(userId = user.id)
     //act
-    Rest.logout(token).shouldBeOK()
+    Rest.logout(session.token).shouldBeOK()
     //assert
-    Mongo.getSession(token) shouldBe None
+    Mongo.getSession(session.token) shouldBe None
     //cleanup
     Mongo.removeUser(user.id)
   }

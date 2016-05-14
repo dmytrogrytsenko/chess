@@ -8,7 +8,6 @@ import chess.mongo.VersionCollection
 import reactivemongo.api.DB
 
 object VersionRepository extends NodeSingleton1[VersionRepository, DB] {
-  val players = "players"
   case class GetVersion(name: String)
   case class RetrievedVersion(name: String, version: Version)
 }

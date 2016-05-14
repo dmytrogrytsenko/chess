@@ -12,14 +12,14 @@ class GetProfileTest extends TestBase {
   it should "return profile of the user" in {
     //arrange
     val user = Mongo.addUser()
-    val token = loginUser(user)
+    val session = Mongo.addSession(userId = user.id)
     //act
-    val result = Rest.getProfile(token).to[ProfileResult]
+    val result = Rest.getProfile(session.token).to[ProfileResult]
     //assert
     result shouldBe ProfileResult(UserData(user))
     //cleanup
-    Mongo.removeSession(token)
-    Mongo.removeUser(user.id)
+    Mongo.removeSessions(session)
+    Mongo.removeUsers(user)
   }
 
   it should "return 401 (Unauthorized) CREDENTIALS_REJECTED if token is incorrect" in {

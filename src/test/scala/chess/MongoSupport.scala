@@ -5,6 +5,7 @@ import chess.common._
 import chess.domain.Identifiers._
 import chess.domain._
 import chess.mongo._
+import chess.repositories.VersionRepository
 import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
 import reactivemongo.api.{DB, MongoDriver}
@@ -35,12 +36,17 @@ trait MongoSupport extends EntityBuilders {
                        version: Version = randomVersion): VersionItem = {
       val item = VersionItem(name, version)
       import VersionCollection.VersionItemWriter
-      VersionCollection.add(item)
+      VersionCollection.add(item).await
       item
     }
 
     def removeVersionItem(name: String) = {
       VersionCollection.remove(name).await
+    }
+
+    def getPlayersVersion = {
+      import VersionCollection._
+      getVersion(players).await
     }
 
     def getUser(id: UserId): Option[User] = {
@@ -56,13 +62,17 @@ trait MongoSupport extends EntityBuilders {
                 createdAt: DateTime = DateTime.now): User = {
       val user = User(id, name, password, displayName, createdAt)
       import UserCollection.UserWriter
-      UserCollection.add(user)
+      UserCollection.add(user).await
       user
     }
 
     def removeUser(id: UserId) = {
       import UserCollection.UserIdWriter
       UserCollection.remove(id).await
+    }
+
+    def removeUsers(users: User*) = {
+      users.foreach(user => removeUser(user.id))
     }
 
     def addSession(token: Token = randomString.toToken,
@@ -75,9 +85,17 @@ trait MongoSupport extends EntityBuilders {
       session
     }
 
+    def addSessions(users: User*) = {
+      users.map(user => addSession(userId = user.id))
+    }
+
     def removeSession(token: Token) = {
       import SessionCollection.TokenWriter
       SessionCollection.remove(token).await
+    }
+
+    def removeSessions(sessions: Session*) = {
+      sessions.foreach(session => removeSession(session.token))
     }
 
     def getSession(token: Token): Option[Session] = {
@@ -100,13 +118,17 @@ trait MongoSupport extends EntityBuilders {
                       completedAt: Option[DateTime] = Some(DateTime.now)): Invitation = {
       val invitation = Invitation(id, inviterId, inviteeId, createdAt, status, completedAt)
       import InvitationCollection.InvitationWriter
-      InvitationCollection.add(invitation)
+      InvitationCollection.add(invitation).await
       invitation
     }
 
     def removeInvitation(id: InvitationId) = {
       import InvitationCollection.InvitationIdWriter
       InvitationCollection.remove(id).await
+    }
+
+    def removeInvitations(invitations: Invitation*) = {
+      invitations.foreach(invitation => removeInvitation(invitation.id))
     }
 
   }
