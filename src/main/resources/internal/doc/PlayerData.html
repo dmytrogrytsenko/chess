@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
+<html>
 
 <head>
     <meta charset="utf-8">
@@ -24,66 +24,9 @@
     <div id="slogan">play and enjoy</div>
     <hr/>
     <h1>Chess REST API Documentation</h1>
-    <h2>GET /profile</h2>
-    <p>Return the user profile information.</p>
 
-    <h3>Request</h3>
-    <samp>GET http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/profile</samp><br/>
+    <h2>PlayerData</h2>
 
-    <h3>Request header</h3>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Example</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Authorization</td>
-            <td>The token to authorize the user.</td>
-            <td><samp>Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</samp></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <h3>Example of request</h3>
-<pre>GET http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/profile
-Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
-
-    <h3>Response</h3>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th width="20%" colspan="2">Status</th>
-            <th width="15%">Code</th>
-            <th>Description</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td><span class="label label-success">200</span></td>
-            <td>OK</td>
-            <td>&nbsp;</td>
-            <td>The user profile is returned successfully.</td>
-        </tr>
-        <tr>
-            <td rowspan="2"><span class="label label-danger">401</span></td>
-            <td rowspan="2">Unauthorized</td>
-            <td><button type="button" class="btn btn-link btn-xs">CREDENTIALS_MISSING</button></td>
-            <td>The resource requires authentication, which was not supplied with the request.</td>
-        </tr>
-        <tr>
-            <td><button type="button" class="btn btn-link btn-xs">CREDENTIALS_REJECTED</button></td>
-            <td>The supplied authentication is invalid.</td>
-        </tr>
-        </tbody>
-    </table>
-
-    <p>See <a href="errors.html">Error Codes & Responses</a></p>
-
-    <h3>Response body</h3>
     <table class="table table-bordered">
         <thead>
         <tr>
@@ -99,20 +42,37 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
             <td>user</td>
             <td><a href="UserData.html">UserData</a></td>
             <td>Required</td>
-            <td>The user information.</td>
-            <td><samp><span class="text-info">"user"</span>: <span class="text-danger">{ ... }</span></samp></td>
+            <td>The information about user.</td>
+            <td><samp><span class="text-info">"user"</span>: { ... }</samp></td>
+        </tr>
+        <tr>
+            <td>userInvitesMe</td>
+            <td>Boolean</td>
+            <td>Required</td>
+            <td>Indicates if that user has invited current user.</td>
+            <td><samp><span class="text-info">"userInvitesMe"</span>: <span class="text-success">true</span></samp></td>
+        </tr>
+        <tr>
+            <td>userIsInvitedByMe</td>
+            <td>Boolean</td>
+            <td>Required</td>
+            <td>Indicates if that current user has invited that user.</td>
+            <td><samp><span class="text-info">"userIsInvitedByMe"</span>: <span class="text-success">false</span></samp></td>
         </tr>
         </tbody>
     </table>
 
-    <h3>Example of response body</h3>
+    <h3>Example</h3>
+
 <pre>{
     <span class="text-info">"user"</span>: {
         <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
         <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
         <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
         <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>
-    }
+    },
+    <span class="text-info">"userInvitesMe"</span>: <span class="text-success">true</span>,
+    <span class="text-info">"userIsInvitedByMe"</span> <span class="text-success">false</span>
 }</pre>
 
 </div>
