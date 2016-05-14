@@ -49,8 +49,14 @@ object SessionCollection extends MongoCollection[Token, Session] {
     ) map items.indexesManager.ensure).map(_ => {})
 
   def activity(token: Token)(implicit db: DB, ec: ExecutionContext): Future[Unit] =
-    items.update($id(token), $set("lastActivityAt" -> DateTime.now)).map(_ => { }).recover { case e => println(e) }
+    items
+      .update($id(token), $set("lastActivityAt" -> DateTime.now), writeConcern)
+      .map(_ => { })
+      .recover { case e => println(e) }
 
   def getOnlineSessions(timeout: FiniteDuration)(implicit db: DB, ec: ExecutionContext): Future[List[Session]] =
-    items.find($doc("lastActivityAt" $gte DateTime.now - timeout)).cursor[Session].collect[List]()
+    items
+      .find($doc("lastActivityAt" $gte DateTime.now - timeout))
+      .cursor[Session]
+      .collect[List]()
 }

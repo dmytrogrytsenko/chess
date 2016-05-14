@@ -50,8 +50,8 @@ class InvitationCollectionTest extends TestBase {
   it should "return pending inviters" in {
     //assert
     val user, user2, user3 = Mongo.addUser()
-    val invitation1 = Mongo.addInvitation(inviterId = user.id, inviteeId = user2.id, status = Pending)
-    val invitation2 = Mongo.addInvitation(inviterId = user.id, inviteeId = user3.id, status = Accepted)
+    val invitation1 = Mongo.addInvitation(inviterId = user2.id, inviteeId = user.id, status = Pending)
+    val invitation2 = Mongo.addInvitation(inviterId = user3.id, inviteeId = user.id, status = Accepted)
     val invitation3 = Mongo.addInvitation(inviterId = user2.id, inviteeId = user3.id, status = Pending)
     //act
     val result = getPendingInviters(user.id).await

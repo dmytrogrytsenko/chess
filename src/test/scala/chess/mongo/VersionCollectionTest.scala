@@ -14,7 +14,7 @@ class VersionCollectionTest extends TestBase {
 
   it should "read and write version correctly" in {
     //arrange
-    val version = Version.initial.next
+    val version = randomVersion
     //act
     val result = VersionReader.read(VersionWriter.write(version))
     //assert
@@ -47,7 +47,7 @@ class VersionCollectionTest extends TestBase {
     //act
     val result = getVersion(item.name).await
     //assert
-    result shouldBe item
+    result shouldBe item.version
     //cleanup
     Mongo.removeVersionItem(item.name)
   }

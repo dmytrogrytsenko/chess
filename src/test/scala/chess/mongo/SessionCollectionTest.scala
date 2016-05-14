@@ -38,7 +38,7 @@ class SessionCollectionTest extends TestBase {
 
   it should "update lastActivityAt correctly" in {
     //arrange
-    val session = buildSession(lastActivityAt = DateTime.now - 1.minute)
+    val session = Mongo.addSession(lastActivityAt = DateTime.now - 1.minute)
     //act
     activity(session.token).await
     //assert

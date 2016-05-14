@@ -31,8 +31,8 @@ trait MongoSupport extends EntityBuilders {
       VersionCollection.get(name).await
     }
 
-    def addVersionItem(name: String = newUUID,
-                       version: Version = Version.initial.next): VersionItem = {
+    def addVersionItem(name: String = randomString,
+                       version: Version = randomVersion): VersionItem = {
       val item = VersionItem(name, version)
       import VersionCollection.VersionItemWriter
       VersionCollection.add(item)
@@ -50,9 +50,9 @@ trait MongoSupport extends EntityBuilders {
     }
 
     def addUser(id: UserId = UserId.generate(),
-                name: String = newUUID,
-                password: String = newUUID,
-                displayName: Option[String] = Some(newUUID),
+                name: String = randomString,
+                password: String = randomString,
+                displayName: Option[String] = Some(randomString),
                 createdAt: DateTime = DateTime.now): User = {
       val user = User(id, name, password, displayName, createdAt)
       import UserCollection.UserWriter
@@ -65,7 +65,7 @@ trait MongoSupport extends EntityBuilders {
       UserCollection.remove(id).await
     }
 
-    def addSession(token: Token = newUUID.toToken,
+    def addSession(token: Token = randomString.toToken,
                    userId: UserId = UserId.generate(),
                    createdAt: DateTime = DateTime.now,
                    lastActivityAt: DateTime = DateTime.now): Session = {

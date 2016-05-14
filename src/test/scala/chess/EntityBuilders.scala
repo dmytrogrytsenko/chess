@@ -15,12 +15,13 @@ trait EntityBuilders {
   def randomString = UUID.randomUUID().toString
   def randomInt = random.nextInt()
   def randomInt(n: Int) = random.nextInt(n)
+  def randomVersion = random.nextInt(1024).toVersion
 
   implicit class RandomSet[T](set: Set[T]) {
     def randomValue = set.toIndexedSeq(randomInt(set.size))
   }
   def buildVersionItem(name: String = randomString,
-                       version: Version = Version.initial.next.next) =
+                       version: Version = randomVersion) =
     VersionItem(name, version)
 
   def buildRegisterData(name: String = randomString,

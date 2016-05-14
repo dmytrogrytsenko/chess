@@ -3,11 +3,14 @@ package chess.common.mongo
 import reactivemongo.api.DB
 import reactivemongo.api.collections.default.BSONCollection
 import reactivemongo.bson._
+import reactivemongo.core.commands.GetLastError
 import reactivemongo.extensions.dsl.BsonDsl
 
 import scala.concurrent.{Future, ExecutionContext}
 
 trait MongoCollection[Key, Entity] extends BsonDsl {
+
+  val writeConcern = GetLastError(fsync = true)
 
   def name: String
 
@@ -31,18 +34,18 @@ trait MongoCollection[Key, Entity] extends BsonDsl {
          (implicit db: DB,
           writer: BSONDocumentWriter[Entity],
           executionContext: ExecutionContext): Future[Unit] =
-    items.insert(entity).map(_ => { })
+    items.insert(entity, writeConcern).map(_ => { })
 
   def update(id: Key, entity: Entity)
          (implicit db: DB,
           identityWriter: BSONWriter[Key, BSONString],
           writer: BSONDocumentWriter[Entity],
           executionContext: ExecutionContext): Future[Unit] =
-    items.update($id(id), entity).map(_ => { })
+    items.update($id(id), entity, writeConcern).map(_ => { })
 
   def remove(id: Key)
             (implicit db: DB,
              identityWriter: BSONWriter[Key, BSONString],
              executionContext: ExecutionContext): Future[Unit] =
-    items.remove($id(id)).map(_ => { })
+    items.remove($id(id), writeConcern).map(_ => { })
 }
