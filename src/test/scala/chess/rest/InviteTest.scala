@@ -4,7 +4,7 @@ import chess.TestBase
 import chess.domain.Identifiers.{UserId, Token}
 import chess.domain.InvitationStatuses.Pending
 import chess.domain.{UserData, InvitationData}
-import chess.rest.Errors.{NotFound, Unauthorized}
+import chess.rest.Errors.{Conflict, NotFound, Unauthorized}
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -60,7 +60,7 @@ class InviteTest extends TestBase {
     result should be (Unauthorized.credentialsRejected)
   }
 
-  it should "return 404 (NotFound) USER_NOT_FOUND inviting user not found" in {
+  it should "return 404 (Not Found) USER_NOT_FOUND inviting user not found" in {
     //arrange
     val user, invitee = Mongo.addUser()
     val session = Mongo.addSession(userId = user.id)
@@ -68,6 +68,19 @@ class InviteTest extends TestBase {
     val result = Rest.invite(session.token, UserId.generate()).toErrorResult
     //assert
     result should be (NotFound.userNotFound)
+    //cleanup
+    Mongo.removeUsers(user)
+    Mongo.removeSessions(session)
+  }
+
+  it should "return 409 (Conflict) CANT_INVITE_SELF if user try to invite self" in {
+    //arrange
+    val user = Mongo.addUser()
+    val session = Mongo.addSession(userId = user.id)
+    //act
+    val result = Rest.invite(session.token, user.id).toErrorResult
+    //assert
+    result should be (Conflict.cantInviteSelf)
     //cleanup
     Mongo.removeUsers(user)
     Mongo.removeSessions(session)

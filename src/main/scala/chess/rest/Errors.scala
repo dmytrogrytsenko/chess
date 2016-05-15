@@ -31,8 +31,8 @@ object Errors {
 
 //409
   object Conflict {
-    def userAlreadyExists(name: String) =
-      ErrorResult(StatusCodes.Conflict, "USER_ALREADY_EXISTS", s"User $name already exists")
+    def userAlreadyExists(name: String) = ErrorResult(StatusCodes.Conflict, "USER_ALREADY_EXISTS", s"User $name already exists")
+    def cantInviteSelf = ErrorResult(StatusCodes.Conflict, "CANT_INVITE_SELF", s"User can't invite self")
   }
 
   //500

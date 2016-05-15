@@ -17,6 +17,8 @@ object InviteController {
 
 class InviteController(userId: UserId, inviteeId: UserId) extends Controller {
   def receive = {
+    case Start if userId == inviteeId =>
+      failure(Conflict.cantInviteSelf)
     case Start =>
       InvitationRepository.endpoint ! Invite(userId, inviteeId)
       UserRepository.endpoint ! FindUserById(userId)

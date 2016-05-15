@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Chess</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='http://fonts.googleapis.com/css?family=Chicle&subset=latin' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Mono&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css' />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+    <link href="../styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="container">
+    <div id="logo">Chess</div>
+    <div id="slogan">play and enjoy</div>
+    <hr/>
+    <h1>Chess REST API Documentation</h1>
+
+    <h2>InvitationData</h2>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th width="1%">Name</th>
+            <th width="10%">Type</th>
+            <th width="1%">Necessity</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>id</td>
+            <td>String</td>
+            <td>Required</td>
+            <td>The unique identifier of the invitation.</td>
+            <td><samp><span class="text-info">"id"</span>: <span class="text-danger">"9eabf9d6-c9f6-4dc9-9167-abf9063fff4d"</span></samp></td>
+        </tr>
+        <tr>
+            <td>inviter</td>
+            <td><a href="UserData.html">UserData</a></td>
+            <td>Required</td>
+            <td>The information about inviter.</td>
+            <td><samp><span class="text-info">"inviter"</span>: { ... }</samp></td>
+        </tr>
+        <tr>
+            <td>invitee</td>
+            <td><a href="UserData.html">UserData</a></td>
+            <td>Required</td>
+            <td>The information about invitee.</td>
+            <td><samp><span class="text-info">"invitee"</span>: { ... }</samp></td>
+        </tr>
+        <tr>
+            <td>createdAt</td>
+            <td>DateTime</td>
+            <td>Required</td>
+            <td>Date and Time in UTC, when the invitation is created.</td>
+            <td><samp><span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span></samp></td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>String</td>
+            <td>Required</td>
+            <td>Current status of invitation: pending, canceled, rejected, accepted.</td>
+            <td><samp><span class="text-info">"status"</span>: <span class="text-danger">"pending"</span></samp></td>
+        </tr>
+        <tr>
+            <td>completedAt</td>
+            <td>DateTime</td>
+            <td>Optional</td>
+            <td>Date and Time in UTC, when the invitation is completed.</td>
+            <td><samp><span class="text-info">"completedAt"</span>: <span class="text-danger">"2016-04-30T10:35:34.186Z"</span></samp></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Example</h3>
+
+<pre>{
+    <span class="text-info">"id"</span>: <span class="text-danger">"9eabf9d6-c9f6-4dc9-9167-abf9063fff4d"</span>,
+    <span class="text-info">"inviter"</span>: {
+        <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+        <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+        <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+        <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:29:17.341Z"</span>
+    },
+    <span class="text-info">"invitee"</span>: {
+        <span class="text-info">"id"</span>: <span class="text-danger">"2a2cdecc-852e-4cad-8c49-821a07f5d7f8"</span>,
+        <span class="text-info">"name"</span>: <span class="text-danger">"johndoe"</span>,
+        <span class="text-info">"displayName"</span>: <span class="text-danger">"John Doe"</span>,
+        <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:30:17.331Z"</span>
+    },
+    <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>,
+    <span class="text-info">"status"</span> <span class="text-danger">"accepted"</span>,
+    <span class="text-info">"completedAt"</span> <span class="text-danger">"2016-04-30T10:35:24.654Z"</span>
+}</pre>
+
+</div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>
