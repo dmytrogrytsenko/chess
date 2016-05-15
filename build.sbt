@@ -27,7 +27,9 @@ libraryDependencies ++= {
     "com.typesafe" % "config" % "1.3.0",
     "org.joda" % "joda-convert" % "1.6",
     "joda-time" % "joda-time" % "2.6",
-    "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka23",
+//    "org.reactivemongo" %% "reactivemongo" % "0.10.5.0.akka23",
+//    "org.reactivemongo" %% "reactivemongo-extensions-bson" % "0.10.5.0.0.akka23",
+    "org.reactivemongo" %% "reactivemongo" % "0.11.11",
     "org.reactivemongo" %% "reactivemongo-extensions-bson" % "0.10.5.0.0.akka23",
     "org.scalatest" %% "scalatest" % "2.2.6",
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion

@@ -15,6 +15,18 @@ object ChessGuardian {
 
 class ChessGuardian(settings: ChessSettings) extends BaseActor {
 
+  var driver: MongoDriver = null
+
+  override def preStart(): Unit = {
+    super.preStart()
+    driver = MongoDriver()
+  }
+
+  override def postStop(): Unit = {
+    super.postStop()
+    driver.close()
+  }
+
   def receive = {
     case Start =>
       createRepositories()
@@ -26,9 +38,8 @@ class ChessGuardian(settings: ChessSettings) extends BaseActor {
 
   def createRepositories(): Unit = {
     import context.dispatcher
-    val driver = new MongoDriver(context.system)
     val connection = driver.connection(settings.mongo.hosts)
-    val db = connection.db(settings.mongo.db)
+    val db = connection(settings.mongo.db)
     UserRepository.create(db)
     SessionRepository.create(db)
     VersionRepository.create(db)

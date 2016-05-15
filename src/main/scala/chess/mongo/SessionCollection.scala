@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import reactivemongo.api.DB
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson._
-import reactivemongo.extensions.dao.Handlers._
+import reactivemongo.extensions.dao.Handlers.BSONDateTimeHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
@@ -57,6 +57,6 @@ object SessionCollection extends MongoCollection[Token, Session] {
   def getOnlineSessions(timeout: FiniteDuration)(implicit db: DB, ec: ExecutionContext): Future[List[Session]] =
     items
       .find($doc("lastActivityAt" $gte DateTime.now - timeout))
-      .cursor[Session]
+      .cursor[Session]()
       .collect[List]()
 }

@@ -26,6 +26,7 @@ object Errors {
   //404
   object NotFound {
     def resourceNotFound = ErrorResult(StatusCodes.NotFound, "RESOURCE_NOT_FOUND", "The requested resource could not be found")
+    def userNotFound = ErrorResult(StatusCodes.NotFound, "USER_NOT_FOUND", "User not found")
   }
 
 //409

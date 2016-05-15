@@ -14,11 +14,12 @@ import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object MongoSupport {
-  lazy val config = ConfigFactory.load()
-  lazy val driver = new MongoDriver
-  lazy val hosts = config.getStringList("chess.mongo.hosts").toList
-  lazy val connection = driver.connection(hosts)
-  lazy val db = connection("chess")
+  val config = ConfigFactory.load()
+  val driver = new MongoDriver()
+  val hosts = config.getStringList("chess.mongo.hosts").toList
+  val connection = driver.connection(hosts)
+  val db = connection("chess")
+  Thread.sleep(1000)
 }
 
 trait MongoSupport extends EntityBuilders {

@@ -13,6 +13,7 @@ object InvitationRepository extends NodeSingleton1[InvitationRepository, DB] {
   case class PendingInviters(invitations: List[Invitation])
   case class GetPendingInvitees(inviteeId: UserId)
   case class PendingInvitees(invitations: List[Invitation])
+  case class Invite(inviterId: UserId, inviteeId: UserId)
 }
 
 class InvitationRepository(implicit val db: DB) extends BaseActor {
@@ -29,5 +30,8 @@ class InvitationRepository(implicit val db: DB) extends BaseActor {
 
     case GetPendingInviters(inviteeId) =>
       getPendingInviters(inviteeId) map PendingInviters.apply pipeTo sender()
+
+    case Invite(inviterId, inviteeId) =>
+      invite(inviterId, inviteeId) pipeTo sender()
   }
 }

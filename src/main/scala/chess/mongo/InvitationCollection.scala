@@ -59,12 +59,19 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
   def getPendingInviters(inviteeId: UserId)(implicit db: DB, ec: ExecutionContext): Future[List[Invitation]] =
     items
       .find($doc("inviteeId" -> inviteeId, "status" -> Pending.value))
-      .cursor[Invitation]
+      .cursor[Invitation]()
       .collect[List]()
 
   def getPendingInvitees(inviterId: UserId)(implicit db: DB, ec: ExecutionContext): Future[List[Invitation]] =
     items
       .find($doc("inviterId" -> inviterId, "status" -> Pending.value))
-      .cursor[Invitation]
+      .cursor[Invitation]()
       .collect[List]()
+
+  def invite(inviterId: UserId, inviteeId: UserId)(implicit db: DB, ec: ExecutionContext): Future[Invitation] =
+    items.findAndUpdate(
+      selector = $doc("inviterId" -> inviterId, "inviteeId" -> inviteeId, "status" -> Pending.value),
+      update = Invitation(inviterId, inviteeId),
+      fetchNewObject = true,
+      upsert = true).map(_.result[Invitation].get)
 }

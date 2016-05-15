@@ -1,16 +1,16 @@
 package chess.common.mongo
 
 import reactivemongo.api.DB
-import reactivemongo.api.collections.default.BSONCollection
+import reactivemongo.api.collections.bson.BSONCollection
+import reactivemongo.api.commands.GetLastError._
 import reactivemongo.bson._
-import reactivemongo.core.commands.GetLastError
 import reactivemongo.extensions.dsl.BsonDsl
 
 import scala.concurrent.{Future, ExecutionContext}
 
 trait MongoCollection[Key, Entity] extends BsonDsl {
 
-  val writeConcern = GetLastError(w = Some(BSONInteger(1)), fsync = true)
+  val writeConcern = Acknowledged
 
   def name: String
 
@@ -21,7 +21,7 @@ trait MongoCollection[Key, Entity] extends BsonDsl {
   def all(implicit db: DB,
           reader: BSONDocumentReader[Entity],
           executionContext: ExecutionContext): Future[List[Entity]] =
-    items.find($empty).cursor[Entity].collect[List]()
+    items.find($empty).cursor[Entity]().collect[List]()
 
   def get(id: Key)
          (implicit db: DB,

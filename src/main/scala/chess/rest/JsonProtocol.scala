@@ -1,7 +1,8 @@
 package chess.rest
 
 import akka.http.scaladsl.model.StatusCode
-import akka.http.scaladsl.unmarshalling.PredefinedFromStringUnmarshallers
+import akka.http.scaladsl.unmarshalling.{Unmarshaller, PredefinedFromStringUnmarshallers}
+import chess.common.Messages.Done
 import chess.domain.Identifiers._
 import chess.domain._
 import chess.rest.Errors.ErrorResult
@@ -10,9 +11,14 @@ import org.joda.time.format.ISODateTimeFormat
 import spray.json._
 
 trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarshallers {
-  //val UserIdSegment: PathMatcher1[UserId] = Segment.map(_.toUserId)
 
   implicit val versionFromStringUnmarshaller = intFromStringUnmarshaller.map(_.toVersion)
+  implicit val userIdFromStringUnmarshaller = Unmarshaller.strict[String, UserId](_.toUserId)
+
+  implicit object DoneJsonFormat extends RootJsonFormat[Done] {
+    def write(value: Done): JsValue = JsString("")
+    def read(json: JsValue): Done = Done
+  }
 
   implicit object DateTimeJsonFormat extends RootJsonFormat[DateTime] {
     private lazy val format = ISODateTimeFormat.dateTime()

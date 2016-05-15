@@ -61,4 +61,14 @@ class InvitationCollectionTest extends TestBase {
     List(user, user2, user3).map(_.id).foreach(Mongo.removeUser)
     List(invitation1, invitation2, invitation3).map(_.id).foreach(Mongo.removeInvitation)
   }
+
+  behavior of "invite"
+
+  it should "add new invitation" in {
+    pending
+  }
+
+  it should "do nothing if pending invitation already existed" in {
+    pending
+  }
 }
