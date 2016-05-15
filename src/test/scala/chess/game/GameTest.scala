@@ -17,7 +17,7 @@ class GameTest extends TestBase {
     //assert
     result.id.underlying.length should be > 0
     result.version shouldBe Version.initial
-    result.startTime shouldBeInRange DateTime.now +- 1.second
+    result.startTime shouldBeInRange DateTime.now +- 2.seconds
     result.board shouldBe Board.initial
     result.movingPlayer shouldBe White
     result.initials shouldBe Set(1, 2, 7, 8).map(Rank(_).squares).reduce(_ ++ _).toSet

@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import chess.common.Messages.Done
 import chess.controllers.{InviteController, GetPlayersController}
 import chess.domain.Identifiers.{UserId, Version}
-import chess.domain.PlayersData
+import chess.domain.{InvitationData, PlayersData}
 import chess.rest.Routes
 
 trait PlayerRoutes extends Routes {
@@ -26,11 +26,11 @@ trait PlayerRoutes extends Routes {
 
   def invite =
     path("invite") {
-      parameter("user".as[UserId]) { inviteeId =>
+      parameter("player".as[UserId]) { inviteeId =>
         post {
           authenticate(userAuthenticator) { userId =>
             complete {
-              InviteController.props(userId, inviteeId).execute[Done]
+              InviteController.props(userId, inviteeId).execute[InvitationData]
             }
           }
         }

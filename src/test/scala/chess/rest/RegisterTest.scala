@@ -21,7 +21,7 @@ class RegisterTest extends TestBase {
     result.user.id should not be empty
     result.user.name shouldBe data.name
     result.user.displayName shouldBe data.displayName
-    result.user.createdAt shouldBeInRange DateTime.now +- 1.second
+    result.user.createdAt shouldBeInRange DateTime.now +- 2.seconds
     val storedUser = Mongo.getUser(result.user.id)
     storedUser shouldBe Some(User(result.user.id, data.name, data.password, data.displayName, result.user.createdAt))
     //cleanup

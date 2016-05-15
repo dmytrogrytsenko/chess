@@ -56,9 +56,9 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
       .withHeaders(Authorization(GenericHttpCredentials(token, "")))
       .execute
 
-    def invite(token: Token, user: UserId) = HttpRequest()
-      .withMethod(HttpMethods.GET)
-      .withUri(s"$baseUrl/invite?user=$user")
+    def invite(token: Token, player: UserId) = HttpRequest()
+      .withMethod(HttpMethods.POST)
+      .withUri(s"$baseUrl/invite?player=$player")
       .withHeaders(Authorization(GenericHttpCredentials(token, "")))
       .execute
   }

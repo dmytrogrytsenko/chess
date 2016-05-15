@@ -42,7 +42,7 @@ class SessionCollectionTest extends TestBase {
     //act
     activity(session.token).await
     //assert
-    Mongo.getSession(session.token).get.lastActivityAt shouldBeInRange DateTime.now +- 1.second
+    Mongo.getSession(session.token).get.lastActivityAt shouldBeInRange DateTime.now +- 2.seconds
     //cleanup
     Mongo.removeSession(session.token)
   }

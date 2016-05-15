@@ -68,10 +68,17 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
       .cursor[Invitation]()
       .collect[List]()
 
+  def getPendingInvitation(inviterId: UserId, inviteeId: UserId)
+                          (implicit db: DB, ec: ExecutionContext): Future[Option[Invitation]] =
+    items
+      .find($doc("inviterId" -> inviterId, "inviteeId" -> inviteeId, "status" -> Pending.value))
+      .one[Invitation]
+
   def invite(inviterId: UserId, inviteeId: UserId)(implicit db: DB, ec: ExecutionContext): Future[Invitation] =
-    items.findAndUpdate(
-      selector = $doc("inviterId" -> inviterId, "inviteeId" -> inviteeId, "status" -> Pending.value),
-      update = Invitation(inviterId, inviteeId),
-      fetchNewObject = true,
-      upsert = true).map(_.result[Invitation].get)
+    getPendingInvitation(inviterId, inviteeId).flatMap { existing =>
+      existing.fold {
+        val invitation = Invitation(inviterId, inviteeId)
+        add(invitation).map(_ => invitation)
+      } (Future.successful)
+    }
 }

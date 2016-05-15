@@ -63,6 +63,24 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
     def write(value: Token): JsValue = JsString(value)
   }
 
+  implicit object InvitationIdJsonFormat extends JsonFormat[InvitationId] {
+    def read(json: JsValue): InvitationId = json match {
+      case JsString(value) => value.toInvitationId
+      case _ => throw new DeserializationException("Expected InvitationId as JsString")
+    }
+    def write(value: InvitationId): JsValue = JsString(value)
+  }
+
+  implicit object InvitationStatusJsonFormat extends JsonFormat[InvitationStatus] {
+    def read(json: JsValue): InvitationStatus = json match {
+      case JsString(value) => InvitationStatus.parse(value).getOrElse {
+        throw new DeserializationException("Unknown InvitationStatus")
+      }
+      case _ => throw new DeserializationException("Expected InvitationStatus as JsString")
+    }
+    def write(status: InvitationStatus): JsValue = JsString(status.value)
+  }
+
   implicit val jsonErrorResult = jsonFormat3(ErrorResult.apply)
   implicit val jsonUserData = jsonFormat4(UserData.apply)
   implicit val jsonRegisterData = jsonFormat3(RegisterData.apply)
@@ -72,5 +90,6 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
   implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
   implicit val jsonPlayerData = jsonFormat3(PlayerData.apply)
   implicit val jsonPlayersData = jsonFormat2(PlayersData.apply)
+  implicit val jsonInvitationData = jsonFormat6(InvitationData.apply)
 
 }

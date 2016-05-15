@@ -36,7 +36,7 @@ class InviteController(userId: UserId, inviteeId: UserId) extends Controller {
     case UserFoundById(user) if user.id == inviteeId =>
       wait(data.copy(invitee = Some(user)))
     case _: UserNotFoundById =>
-      failure(NotFound.resourceNotFound)
+      failure(NotFound.userNotFound)
   }
 
   case class Data(invitation: Option[Invitation] = None,
