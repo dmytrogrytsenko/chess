@@ -2,13 +2,13 @@ package chess.routes
 
 import akka.http.scaladsl.model.StatusCodes._
 import chess.common.Messages.Done
-import chess.controllers.{InviteController, GetPlayersController}
-import chess.domain.Identifiers.{UserId, Version}
+import chess.controllers._
+import chess.domain.Identifiers.{InvitationId, UserId, Version}
 import chess.domain.{InvitationData, PlayersData}
 import chess.rest.Routes
 
 trait PlayerRoutes extends Routes {
-  val playerRoutes = getPlayers ~ invite
+  val playerRoutes = getPlayers ~ invite ~ cancelInvitation ~ rejectInvitation ~ acceptInvitation
 
   def getPlayers =
     path("players") {
@@ -36,4 +36,44 @@ trait PlayerRoutes extends Routes {
         }
       }
     }
+
+  def cancelInvitation =
+    path("invitations" / "cancel") {
+      parameter("id".as[InvitationId]) { invitationId =>
+        put {
+          authenticate(userAuthenticator) { userId =>
+            complete {
+              CancelInvitationController.props(userId, invitationId).execute[InvitationData]
+            }
+          }
+        }
+      }
+    }
+
+  def rejectInvitation =
+    path("invitations" / "reject") {
+      parameter("id".as[InvitationId]) { invitationId =>
+        put {
+          authenticate(userAuthenticator) { userId =>
+            complete {
+              RejectInvitationController.props(userId, invitationId).execute[InvitationData]
+            }
+          }
+        }
+      }
+    }
+
+  def acceptInvitation =
+    path("invitations" / "accept") {
+      parameter("id".as[InvitationId]) { invitationId =>
+        put {
+          authenticate(userAuthenticator) { userId =>
+            complete {
+              AcceptInvitationController.props(userId, invitationId).execute[InvitationData]
+            }
+          }
+        }
+      }
+    }
+
 }

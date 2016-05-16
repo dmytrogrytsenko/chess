@@ -44,7 +44,7 @@ trait UserRoutes extends Routes {
       post {
         authenticate(tokenAuthenticator) { token =>
           complete {
-            LogoutController.props(token).execute[Done].map(_ => "")
+            LogoutController.props(token).execute[Done]
           }
         }
       }

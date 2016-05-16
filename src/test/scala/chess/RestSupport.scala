@@ -7,7 +7,7 @@ import akka.stream.Materializer
 import akka.testkit.TestKitBase
 import akka.util.Timeout
 import chess.common._
-import chess.domain.Identifiers.{UserId, Version, Token}
+import chess.domain.Identifiers.{InvitationId, UserId, Version, Token}
 import chess.domain.{LoginResult, User, LoginData, RegisterData}
 import chess.rest.Errors.{RestException, ErrorResult}
 import chess.rest.JsonProtocol
@@ -61,6 +61,25 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
       .withUri(s"$baseUrl/invite?player=$player")
       .withHeaders(Authorization(GenericHttpCredentials(token, "")))
       .execute
+
+    def cancelInvitation(token: Token, invitationId: InvitationId) = HttpRequest()
+      .withMethod(HttpMethods.PUT)
+      .withUri(s"$baseUrl/invitations/cancel?id=$invitationId")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
+    def rejectInvitation(token: Token, invitationId: InvitationId) = HttpRequest()
+      .withMethod(HttpMethods.PUT)
+      .withUri(s"$baseUrl/invitations/reject?id=$invitationId")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
+    def acceptInvitation(token: Token, invitationId: InvitationId) = HttpRequest()
+      .withMethod(HttpMethods.PUT)
+      .withUri(s"$baseUrl/invitations/accept?id=$invitationId")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
   }
 
   implicit class RichHttpRequest(request: HttpRequest) {

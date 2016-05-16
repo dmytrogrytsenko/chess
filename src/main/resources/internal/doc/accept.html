@@ -24,11 +24,11 @@
     <div id="slogan">play and enjoy</div>
     <hr/>
     <h1>Chess REST API Documentation</h1>
-    <h2>POST /invite</h2>
-    <p>Invite other user to play new game.</p>
+    <h2>PUT /invitations/accept</h2>
+    <p>Accept invitation.</p>
 
     <h3>Request</h3>
-    <samp>POST http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/invite?player=<span class="text-success">{id}</span></samp><br/>
+    <samp>PUT http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/invitations/accept?id=<span class="text-success">{id}</span></samp><br/>
 
     <h3>Request header</h3>
     <table class="table table-bordered">
@@ -61,17 +61,17 @@
         </thead>
         <tbody>
         <tr>
-            <td>player</td>
+            <td>id</td>
             <td>String</td>
             <td>Required</td>
-            <td>The unique identifier of invitee.</td>
+            <td>The unique identifier of invitation.</td>
             <td><samp>baabfa7d-74f5-48ab-bf14-f1fdb62d2147</samp></td>
         </tr>
         </tbody>
     </table>
 
     <h3>Example of request</h3>
-<pre>POST http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/invite?player=<span class="text-success">baabfa7d-74f5-48ab-bf14-f1fdb62d2147</span>
+<pre>PUT http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/invitations/accept?id=<span class="text-success">baabfa7d-74f5-48ab-bf14-f1fdb62d2147</span>
 Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
 
     <h3>Response</h3>
@@ -101,16 +101,22 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
             <td>The supplied authentication is invalid.</td>
         </tr>
         <tr>
+            <td><span class="label label-danger">403</span></td>
+            <td>Forbidden</td>
+            <td><button type="button" class="btn btn-link btn-xs">ACCESS_DENIED</button></td>
+            <td>Access denied. Only invitee can accept the invitation.</td>
+        </tr>
+        <tr>
             <td><span class="label label-danger">404</span></td>
             <td>Not Found</td>
-            <td><button type="button" class="btn btn-link btn-xs">USER_NOT_FOUND</button></td>
-            <td>The inviting user not found.</td>
+            <td><button type="button" class="btn btn-link btn-xs">INVITATION_NOT_FOUND</button></td>
+            <td>The invitation not found.</td>
         </tr>
         <tr>
             <td><span class="label label-danger">409</span></td>
             <td>Confict</td>
-            <td><button type="button" class="btn btn-link btn-xs">CANT_INVITE_SELF</button></td>
-            <td>The user can't invite self.</td>
+            <td><button type="button" class="btn btn-link btn-xs">INCORRECT_INVITATION_STATUS</button></td>
+            <td>Incorrect invitation status.</td>
         </tr>
         </tbody>
     </table>

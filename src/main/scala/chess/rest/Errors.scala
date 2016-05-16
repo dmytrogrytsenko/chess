@@ -23,16 +23,23 @@ object Errors {
     def credentialsRejected = ErrorResult(StatusCodes.Unauthorized, "CREDENTIALS_REJECTED", "The supplied authentication is invalid")
   }
 
+  //403
+  object Forbidden {
+    def accessDenied = ErrorResult(StatusCodes.Forbidden, "ACCESS_DENIED","Access denied.")
+  }
+
   //404
   object NotFound {
     def resourceNotFound = ErrorResult(StatusCodes.NotFound, "RESOURCE_NOT_FOUND", "The requested resource could not be found")
     def userNotFound = ErrorResult(StatusCodes.NotFound, "USER_NOT_FOUND", "User not found")
+    def invitationNotFound = ErrorResult(StatusCodes.NotFound, "INVITATION_NOT_FOUND", "Invitation not found")
   }
 
-//409
+  //409
   object Conflict {
     def userAlreadyExists(name: String) = ErrorResult(StatusCodes.Conflict, "USER_ALREADY_EXISTS", s"User $name already exists")
     def cantInviteSelf = ErrorResult(StatusCodes.Conflict, "CANT_INVITE_SELF", s"User can't invite self")
+    def incorrectInvitationStatus = ErrorResult(StatusCodes.Conflict, "INCORRECT_INVITATION_STATUS", s"Incorrect invitation status")
   }
 
   //500

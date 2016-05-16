@@ -129,4 +129,24 @@ class InvitationCollectionTest extends TestBase {
     //cleanup
     Mongo.removeInvitations(invitation)
   }
+
+  behavior of "complete"
+
+  it should "complete invitation" in {
+    //arrange
+    val invitation = Mongo.addInvitation()
+    val status = (InvitationStatus.all - Pending).randomValue
+    //act
+    val result = complete(invitation.id, status).await
+    //assert
+    result.id shouldBe invitation.id
+    result.inviterId shouldBe invitation.inviterId
+    result.inviteeId shouldBe invitation.inviteeId
+    result.createdAt shouldBe invitation.createdAt
+    result.status shouldBe status
+    result.completedAt.get shouldBeInRange DateTime.now +- 2.seconds
+    //cleanup
+    Mongo.removeInvitations(invitation)
+  }
+
 }

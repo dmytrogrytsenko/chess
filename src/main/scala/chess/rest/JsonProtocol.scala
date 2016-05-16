@@ -14,6 +14,7 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
 
   implicit val versionFromStringUnmarshaller = intFromStringUnmarshaller.map(_.toVersion)
   implicit val userIdFromStringUnmarshaller = Unmarshaller.strict[String, UserId](_.toUserId)
+  implicit val invitationIdFromStringUnmarshaller = Unmarshaller.strict[String, InvitationId](_.toInvitationId)
 
   implicit object DoneJsonFormat extends RootJsonFormat[Done] {
     def write(value: Done): JsValue = JsString("")

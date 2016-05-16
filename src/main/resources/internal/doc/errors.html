@@ -63,6 +63,12 @@
             <td>The supplied authentication is invalid.</td>
         </tr>
         <tr>
+            <td><span class="label label-danger">403</span></td>
+            <td>Forbidden</td>
+            <td><button type="button" class="btn btn-link btn-xs">ACCESS_DENIED</button></td>
+            <td>The requested resource could not be found but may be available again in the future.</td>
+        </tr>
+        <tr>
             <td rowspan="2"><span class="label label-danger">404</span></td>
             <td rowspan="2">Not Found</td>
             <td><button type="button" class="btn btn-link btn-xs">RESOURCE_NOT_FOUND</button></td>
@@ -73,14 +79,18 @@
             <td>The user not found.</td>
         </tr>
         <tr>
-            <td rowspan="2"><span class="label label-danger">409</span></td>
-            <td rowspan="2">Conflict</td>
+            <td rowspan="3"><span class="label label-danger">409</span></td>
+            <td rowspan="3">Conflict</td>
             <td><button type="button" class="btn btn-link btn-xs">USER_ALREADY_EXISTS</button></td>
             <td>User already exists.</td>
         </tr>
         <tr>
             <td><button type="button" class="btn btn-link btn-xs">CANT_INVITE_SELF</button></td>
             <td>User can't invite self.</td>
+        </tr>
+        <tr>
+            <td><button type="button" class="btn btn-link btn-xs">INCORRECT_INVITATION_STATUS</button></td>
+            <td>Incorrect invitation status.</td>
         </tr>
         <tr>
             <td rowspan="2"><span class="label label-danger">500</span></td>

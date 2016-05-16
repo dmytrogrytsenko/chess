@@ -6,10 +6,12 @@ import chess.domain.{Invitation, InvitationStatus}
 import chess.domain.InvitationStatuses._
 import org.joda.time.DateTime
 import reactivemongo.api.DB
+import reactivemongo.api.indexes.{IndexType, Index}
 import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, BSONReader, BSONString, BSONWriter}
 import reactivemongo.extensions.dao.Handlers._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration._
 
 object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
 
@@ -56,6 +58,11 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
       completedAt = doc.getAs[DateTime]("completedAt"))
   }
 
+  override def ensureIndexes(implicit db: DB, ec: ExecutionContext) =
+    Future.sequence(List(
+      Index(Seq("completedAt" -> IndexType.Descending), options = $doc("expireAfterSeconds" -> 1.day.toSeconds))
+    ) map items.indexesManager.ensure).map(_ => {})
+
   def getPendingInviters(inviteeId: UserId)(implicit db: DB, ec: ExecutionContext): Future[List[Invitation]] =
     items
       .find($doc("inviteeId" -> inviteeId, "status" -> Pending.value))
@@ -81,4 +88,9 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
         add(invitation).map(_ => invitation)
       } (Future.successful)
     }
+
+  def complete(id: InvitationId, status: InvitationStatus)(implicit db: DB, ec: ExecutionContext): Future[Invitation] =
+    items
+      .findAndUpdate($id(id), $set("status" -> status.value, "completedAt" -> DateTime.now), fetchNewObject = true)
+      .map(_.result[Invitation].get)
 }
