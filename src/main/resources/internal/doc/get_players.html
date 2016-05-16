@@ -124,11 +124,25 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
         </thead>
         <tbody>
         <tr>
-            <td>players</td>
-            <td>List&nbsp;of&nbsp;<a href="PlayerData.html">PlayerData</a></td>
+            <td>onlinePlayers</td>
+            <td>List&nbsp;of&nbsp;<a href="UserData.html">UserData</a></td>
             <td>Required</td>
             <td>The information about online players.</td>
-            <td><samp><span class="text-info">"players"</span>: [ { ... }, { ... } ]</samp></td>
+            <td><samp><span class="text-info">"onlinePlayers"</span>: [ { ... }, { ... } ]</samp></td>
+        </tr>
+        <tr>
+            <td>inviters</td>
+            <td>List&nbsp;of&nbsp;<a href="InvitationData.html">InvitationData</a></td>
+            <td>Required</td>
+            <td>The information about inviters.</td>
+            <td><samp><span class="text-info">"inviters"</span>: [ { ... }, { ... } ]</samp></td>
+        </tr>
+        <tr>
+            <td>invitees</td>
+            <td>List&nbsp;of&nbsp;<a href="InvitationData.html">InvitationData</a></td>
+            <td>Required</td>
+            <td>The information about invitees.</td>
+            <td><samp><span class="text-info">"invitees"</span>: [ { ... }, { ... } ]</samp></td>
         </tr>
         <tr>
             <td>version</td>
@@ -142,16 +156,50 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
 
     <h3>Example of response body</h3>
 <pre>{
-    <span class="text-info">"players"</span>: [
+    <span class="text-info">"onlinePlayers"</span>: [
         {
-            <span class="text-info">"user"</span>: {
-                <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
-                <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
-                <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
-                <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>
+            <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+            <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+            <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+            <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>
+        }
+    ],
+    <span class="text-info">"inviters"</span>: [
+        {
+            <span class="text-info">"id"</span>: <span class="text-danger">"9eabf9d6-c9f6-4dc9-9167-abf9063fff4d"</span>,
+            <span class="text-info">"inviter"</span>: {
+                    <span class="text-info">"id"</span>: <span class="text-danger">"2a2cdecc-852e-4cad-8c49-821a07f5d7f8"</span>,
+                    <span class="text-info">"name"</span>: <span class="text-danger">"johndoe"</span>,
+                    <span class="text-info">"displayName"</span>: <span class="text-danger">"John Doe"</span>,
+                    <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:30:17.331Z"</span>
             },
-            <span class="text-info">"userInvitesMe"</span>: <span class="text-success">true</span>,
-            <span class="text-info">"userIsInvitedByMe"</span> <span class="text-success">false</span>
+            <span class="text-info">"invitee"</span>: {
+                    <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+                    <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+                    <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+                    <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:29:17.341Z"</span>
+            },
+            <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>,
+            <span class="text-info">"status"</span> <span class="text-danger">"pending"</span>
+        }
+    ],
+    <span class="text-info">"invitees"</span>: [
+        {
+            <span class="text-info">"id"</span>: <span class="text-danger">"9eabf9d6-c9f6-4dc9-9167-abf9063fff4d"</span>,
+            <span class="text-info">"inviter"</span>: {
+                    <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
+                    <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
+                    <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
+                    <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:29:17.341Z"</span>
+            },
+            <span class="text-info">"invitee"</span>: {
+                    <span class="text-info">"id"</span>: <span class="text-danger">"2a2cdecc-852e-4cad-8c49-821a07f5d7f8"</span>,
+                    <span class="text-info">"name"</span>: <span class="text-danger">"johndoe"</span>,
+                    <span class="text-info">"displayName"</span>: <span class="text-danger">"John Doe"</span>,
+                    <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:30:17.331Z"</span>
+            },
+            <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>,
+            <span class="text-info">"status"</span> <span class="text-danger">"pending"</span>
         }
     ],
     <span class="text-info">"version"</span>: <span class="text-success">42</span>

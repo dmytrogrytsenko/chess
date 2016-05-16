@@ -5,7 +5,7 @@ import chess.TestBase
 import chess.common._
 import chess.domain.Identifiers._
 import chess.domain.InvitationStatuses.Pending
-import chess.domain.{UserData, PlayerData, PlayersData}
+import chess.domain.{InvitationData, UserData, PlayersData}
 import chess.rest.Errors.Unauthorized
 import org.joda.time.DateTime
 
@@ -22,7 +22,7 @@ class GetPlayersTest extends TestBase {
     //act
     val result = Rest.getPlayers(session.token).to[PlayersData]
     //assert
-    result.players.exists(_.user.id == user.id) shouldBe false
+    result.onlinePlayers.exists(_.id == user.id) shouldBe false
     //cleanup
     Mongo.removeSessions(session)
     Mongo.removeUsers(user)
@@ -36,9 +36,10 @@ class GetPlayersTest extends TestBase {
     //act
     val result = Rest.getPlayers(session.token).to[PlayersData]
     //assert
-    val expectedPlayerData = PlayerData(UserData(user2), userInvitesMe = false, userIsInvitedByMe = false)
-    result.players.find(_.user.id == user2.id) shouldBe Some(expectedPlayerData)
-    result.players.find(_.user.id == user3.id) shouldBe None
+    result.onlinePlayers.find(_.id == user2.id) shouldBe Some(UserData(user2))
+    result.onlinePlayers.find(_.id == user3.id) shouldBe None
+    result.inviters shouldBe Nil
+    result.invitees shouldBe Nil
     //cleanup
     Mongo.removeSessions(session, session2, session3)
     Mongo.removeUsers(user, user2, user3)
@@ -53,9 +54,10 @@ class GetPlayersTest extends TestBase {
     val previousVersion = (Mongo.getPlayersVersion - 1).toVersion
     val result = Rest.getPlayers(session.token, Some(previousVersion)).to[PlayersData]
     //assert
-    val expectedPlayerData = PlayerData(UserData(user2), userInvitesMe = false, userIsInvitedByMe = false)
-    result.players.find(_.user.id == user2.id) shouldBe Some(expectedPlayerData)
-    result.players.find(_.user.id == user3.id) shouldBe None
+    result.onlinePlayers.find(_.id == user2.id) shouldBe Some(UserData(user2))
+    result.onlinePlayers.find(_.id == user3.id) shouldBe None
+    result.inviters shouldBe Nil
+    result.invitees shouldBe Nil
     //cleanup
     Mongo.removeSessions(session, session2, session3)
     Mongo.removeUsers(user, user2, user3)
@@ -75,7 +77,7 @@ class GetPlayersTest extends TestBase {
     Mongo.removeUsers(user, user2)
   }
 
-  it should "return userInvitesMe = true if other user has invited current user" in {
+  it should "return inviters if other user has invited current user" in {
     //arrange
     val user, user2 = Mongo.addUser()
     val Seq(session, session2) = Mongo.addSessions(user, user2)
@@ -83,15 +85,15 @@ class GetPlayersTest extends TestBase {
     //act
     val result = Rest.getPlayers(session.token).to[PlayersData]
     //assert
-    val expectedPlayerData = PlayerData(UserData(user2), userInvitesMe = true, userIsInvitedByMe = false)
-    result.players.find(_.user.id == user2.id) shouldBe Some(expectedPlayerData)
+    result.inviters shouldBe List(InvitationData(invitation, user2, user))
+    result.invitees shouldBe Nil
     //cleanup
     Mongo.removeSessions(session, session2)
     Mongo.removeUsers(user, user2)
     Mongo.removeInvitations(invitation)
   }
 
-  it should "return userIsInvitedByMe = true if current user has invited other user" in {
+  it should "return invitees if current user has invited other user" in {
     //arrange
     val user, user2 = Mongo.addUser()
     val Seq(session, session2) = Mongo.addSessions(user, user2)
@@ -99,8 +101,8 @@ class GetPlayersTest extends TestBase {
     //act
     val result = Rest.getPlayers(session.token).to[PlayersData]
     //assert
-    val expectedPlayerData = PlayerData(UserData(user2), userInvitesMe = false, userIsInvitedByMe = true)
-    result.players.find(_.user.id == user2.id) shouldBe Some(expectedPlayerData)
+    result.inviters shouldBe Nil
+    result.invitees shouldBe List(InvitationData(invitation, user, user2))
     //cleanup
     Mongo.removeSessions(session, session2)
     Mongo.removeUsers(user, user2)

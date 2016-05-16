@@ -30,42 +30,51 @@ class GetPlayersController(userId: UserId, version: Option[Version]) extends Con
 
     case RetrievedVersion(`players`, currentVersion) =>
       SessionRepository.endpoint ! GetOnlineSessions(settings.chess.onlineUserTimeout)
-      become(waitingForSessions(currentVersion))
-  }
-
-  def waitingForSessions(currentVersion: Version): Receive = {
-    case OnlineSessions(sessions) if sessions.isEmpty =>
-      complete(Some(PlayersData(Nil, currentVersion)))
-
-    case OnlineSessions(sessions) =>
-      UserRepository.endpoint ! GetUsers(sessions.map(_.userId).filter(_ != userId).toSet)
       InvitationRepository.endpoint ! GetPendingInviters(userId)
       InvitationRepository.endpoint ! GetPendingInvitees(userId)
-      waitForUsers(Data(currentVersion, sessions))
+      waitForData(Data(currentVersion))
+  }
+
+  def waitForData(data: Data): Unit = {
+    if (data.ready) {
+      UserRepository.endpoint ! GetUsers(data.userIds)
+      become(waitingForUsers(data))
+    } else {
+      become(waitingForData(data))
+    }
+  }
+
+  def waitingForData(data: Data): Receive = {
+    case OnlineSessions(sessions) => waitForData(data.copy(sessions = Some(sessions)))
+    case PendingInviters(invitations) => waitForData(data.copy(inviters = Some(invitations)))
+    case PendingInvitees(invitations) => waitForData(data.copy(invitees = Some(invitations)))
   }
 
   def waitingForUsers(data: Data): Receive = {
-    case RetrievedUsers(users) => waitForUsers(data.copy(users = Some(users)))
-    case PendingInviters(invitations) => waitForUsers(data.copy(inviters = Some(invitations)))
-    case PendingInvitees(invitations) => waitForUsers(data.copy(invitees = Some(invitations)))
-  }
-
-  def waitForUsers(data: Data) = {
-    if (data.ready) complete(data.result) else become(waitingForUsers(data))
+    case RetrievedUsers(users) => complete(Some(data.copy(users = users).result))
   }
 
   case class Data(currentVersion: Version,
-                  sessions: List[Session],
-                  users: Option[List[User]] = None,
+                  sessions: Option[List[Session]] = None,
                   inviters: Option[List[Invitation]] = None,
-                  invitees: Option[List[Invitation]] = None) {
-    def ready = users.isDefined && inviters.isDefined && invitees.isDefined
+                  invitees: Option[List[Invitation]] = None,
+                  users: List[User] = Nil) {
+    def ready = sessions.nonEmpty && inviters.nonEmpty && invitees.nonEmpty
 
-    def result = Some(PlayersData(sessions.filter(_.userId != userId).map(buildPlayerData), currentVersion))
+    def userIds =
+      sessions.get.map(_.userId).toSet ++
+      inviters.get.map(_.inviterId).toSet ++
+      invitees.get.map(_.inviteeId).toSet
 
-    def buildPlayerData(session: Session) = PlayerData(
-      user = users.get.find(_.id == session.userId).map(UserData.apply).getOrElse(UserData.unknown(session.userId)),
-      userInvitesMe = inviters.get.exists(_.inviteeId == userId),
-      userIsInvitedByMe = invitees.get.exists(_.inviterId == userId))
+    def user(userId: UserId) = users.find(_.id == userId).getOrElse(User.unknown(userId))
+    def userData(userId: UserId) = UserData(user(userId))
+    def onlinePlayers = sessions.get.map(_.userId).filter(_ != userId).map(userData)
+    def invitationData(inv: Invitation) = InvitationData(inv, user(inv.inviterId), user(inv.inviteeId))
+    def invitations(invs: Option[List[Invitation]]) = invs.get.map(invitationData)
+
+    def result = PlayersData(onlinePlayers,
+      invitations(inviters),
+      invitations(invitees),
+      version = currentVersion)
   }
 }

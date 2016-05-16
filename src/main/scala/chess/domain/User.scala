@@ -17,6 +17,8 @@ object User {
       password = data.password,
       displayName = data.displayName,
       createdAt = DateTime.now)
+
+  def unknown(userId: UserId) = User(userId, "unknown", "", Some("Unknown"), DateTime.now)
 }
 
 case class UserData(id: UserId, name: String, displayName: Option[String], createdAt: DateTime)

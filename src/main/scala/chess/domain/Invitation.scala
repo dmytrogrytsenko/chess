@@ -59,7 +59,9 @@ case class InvitationData(id: InvitationId,
                           completedAt: Option[DateTime])
 
 object InvitationData {
-  def apply(invitation: Invitation, inviter: User, invitee: User): InvitationData =
+  def apply(invitation: Invitation,
+            inviter: User,
+            invitee: User): InvitationData =
     InvitationData(
       id = invitation.id,
       inviter = UserData(inviter),

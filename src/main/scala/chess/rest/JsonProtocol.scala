@@ -89,8 +89,6 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
   implicit val jsonLoginData = jsonFormat2(LoginData.apply)
   implicit val jsonLoginResult = jsonFormat2(LoginResult.apply)
   implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
-  implicit val jsonPlayerData = jsonFormat3(PlayerData.apply)
-  implicit val jsonPlayersData = jsonFormat2(PlayersData.apply)
   implicit val jsonInvitationData = jsonFormat6(InvitationData.apply)
-
+  implicit val jsonPlayersData = jsonFormat4(PlayersData.apply)
 }
