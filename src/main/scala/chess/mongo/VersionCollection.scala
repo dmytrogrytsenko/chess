@@ -35,6 +35,14 @@ object VersionCollection extends MongoCollection[String, VersionItem] {
   }
 
   def getVersion(name: String)(implicit db: DB, ec: ExecutionContext): Future[Version] =
-    items.find($id(name)).one[VersionItem].map(_.map(_.version).getOrElse(Version.initial))
+    items
+      .find($id(name))
+      .one[VersionItem]
+      .map(_.map(_.version).getOrElse(Version.initial))
+
+  def increment(name: String)(implicit db: DB, ec: ExecutionContext): Future[Version] =
+    items
+      .findAndUpdate($id(name), $inc("version" -> 1), fetchNewObject = true, upsert = true)
+      .map(_.result[VersionItem].get.version)
 }
 

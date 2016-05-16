@@ -52,4 +52,28 @@ class VersionCollectionTest extends TestBase {
     Mongo.removeVersionItem(item.name)
   }
 
+  behavior of "increment"
+
+  it should "return initial version if version not found" in {
+    //arrange
+    val name = randomString
+    //act
+    val result = increment(name).await
+    //assert
+    result shouldBe Version.initial
+    //cleanup
+    Mongo.removeVersionItem(name)
+  }
+
+  it should "increment version" in {
+    //arrange
+    val item = Mongo.addVersionItem()
+    //act
+    val result = increment(item.name).await
+    //assert
+    result shouldBe item.version.next
+    //cleanup
+    Mongo.removeVersionItem(item.name)
+  }
+
 }

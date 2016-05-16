@@ -1,7 +1,7 @@
 package chess.rest
 
 import chess.TestBase
-import chess.domain.Identifiers.{UserId, Token}
+import chess.domain.Identifiers._
 import chess.domain.InvitationStatuses.Pending
 import chess.domain.{UserData, InvitationData}
 import chess.rest.Errors.{Conflict, NotFound, Unauthorized}
@@ -51,6 +51,21 @@ class InviteTest extends TestBase {
     Mongo.removeUsers(user, invitee)
     Mongo.removeSessions(session)
     Mongo.removeInvitations(invitation)
+  }
+
+  it should "increment players version" in {
+    //arrange
+    val user, invitee = Mongo.addUser()
+    val session = Mongo.addSession(userId = user.id)
+    val version = Mongo.getPlayersVersion
+    //act
+    val result = Rest.invite(session.token, invitee.id).to[InvitationData]
+    //assert
+    Mongo.getPlayersVersion should be >= version.next
+    //cleanup
+    Mongo.removeUsers(user, invitee)
+    Mongo.removeSessions(session)
+    Mongo.removeInvitation(result.id)
   }
 
   it should "return 401 (Unauthorized) CREDENTIALS_REJECTED if token is incorrect" in {

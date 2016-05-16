@@ -4,8 +4,10 @@ import akka.actor.Props
 import chess.common.Messages.Start
 import chess.domain.Identifiers.UserId
 import chess.domain.{User, InvitationData, Invitation}
+import chess.mongo.VersionCollection._
 import chess.repositories.UserRepository.{UserFoundById, UserNotFoundById, FindUserById}
-import chess.repositories.{UserRepository, InvitationRepository}
+import chess.repositories.VersionRepository.{VersionIncremented, IncrementVersion}
+import chess.repositories.{VersionRepository, UserRepository, InvitationRepository}
 import chess.repositories.InvitationRepository.Invite
 import chess.rest.Controller
 import chess.rest.Errors._
@@ -27,7 +29,12 @@ class InviteController(userId: UserId, inviteeId: UserId) extends Controller {
   }
 
   def wait(data: Data): Unit = {
-    if (data.ready) complete(data.result) else become(waiting(data))
+    if (data.ready) {
+      VersionRepository.endpoint ! IncrementVersion(players)
+      become(waitingForVersionIncremented(data))
+    } else {
+      become(waiting(data))
+    }
   }
 
   def waiting(data: Data): Receive = {
@@ -39,6 +46,10 @@ class InviteController(userId: UserId, inviteeId: UserId) extends Controller {
       wait(data.copy(invitee = Some(user)))
     case _: UserNotFoundById =>
       failure(NotFound.userNotFound)
+  }
+
+  def waitingForVersionIncremented(data: Data): Receive = {
+    case VersionIncremented(`players`, _) => complete(data.result)
   }
 
   case class Data(invitation: Option[Invitation] = None,

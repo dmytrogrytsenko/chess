@@ -10,6 +10,8 @@ import reactivemongo.api.DB
 object VersionRepository extends NodeSingleton1[VersionRepository, DB] {
   case class GetVersion(name: String)
   case class RetrievedVersion(name: String, version: Version)
+  case class IncrementVersion(name: String)
+  case class VersionIncremented(name: String, version: Version)
 }
 
 class VersionRepository(implicit val db: DB) extends BaseActor {
@@ -23,5 +25,8 @@ class VersionRepository(implicit val db: DB) extends BaseActor {
 
     case GetVersion(name) =>
       getVersion(name) map { version => RetrievedVersion(name, version) } pipeTo sender()
+
+    case IncrementVersion(name) =>
+      increment(name) map { version => VersionIncremented(name, version) } pipeTo sender()
   }
 }

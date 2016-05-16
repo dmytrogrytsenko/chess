@@ -1,7 +1,7 @@
 package chess.rest
 
 import chess.TestBase
-import chess.domain.Identifiers.{Token, InvitationId}
+import chess.domain.Identifiers._
 import chess.domain.InvitationData
 import chess.domain.InvitationStatuses.{Rejected, Accepted, Pending, Canceled}
 import chess.rest.Errors.{Conflict, Forbidden, NotFound, Unauthorized}
@@ -24,6 +24,22 @@ class RejectInvitationTest extends TestBase {
     val expected = invitation.copy(status = Rejected, completedAt = result.completedAt)
     result shouldBe InvitationData(expected, user, invitee)
     result.completedAt.get shouldBeInRange DateTime.now +- 2.seconds
+    //cleanup
+    Mongo.removeUsers(user, invitee)
+    Mongo.removeSessions(session)
+    Mongo.removeInvitations(invitation)
+  }
+
+  it should "increment players version" in {
+    //arrange
+    val user, invitee = Mongo.addUser()
+    val session = Mongo.addSession(userId = invitee.id)
+    val invitation = Mongo.addInvitation(inviterId = user.id, inviteeId = invitee.id, status = Pending)
+    val version = Mongo.getPlayersVersion
+    //act
+    val result = Rest.rejectInvitation(session.token, invitation.id).to[InvitationData]
+    //assert
+    Mongo.getPlayersVersion should be >= version.next
     //cleanup
     Mongo.removeUsers(user, invitee)
     Mongo.removeSessions(session)

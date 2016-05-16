@@ -6,6 +6,7 @@ import akka.stream.Materializer
 import akka.testkit.TestKit
 import akka.util.Timeout
 import chess.common._
+import chess.domain.Identifiers.Version
 import chess.domain.{LoginResult, LoginData, User}
 import org.scalatest.{FlatSpecLike, Matchers}
 
@@ -22,6 +23,7 @@ abstract class TestBase
 
   implicit val materializer: Materializer = ActorMaterializer()
   implicit val timeout: Timeout = Timeout(5.seconds)
+  implicit val versionOrdering: Ordering[Version] = Ordering.by[Version, Int](x => x)
 
   sys.addShutdownHook(system.terminate().await)
 }

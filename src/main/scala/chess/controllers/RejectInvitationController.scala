@@ -5,8 +5,10 @@ import chess.common.Messages.Start
 import chess.domain.Identifiers._
 import chess.domain.{InvitationData, User, Invitation}
 import chess.domain.InvitationStatuses.{Rejected, Pending}
+import chess.mongo.VersionCollection._
 import chess.repositories.UserRepository.{UserFoundById, UserNotFoundById, FindUserById}
-import chess.repositories.{UserRepository, InvitationRepository}
+import chess.repositories.VersionRepository.{IncrementVersion, VersionIncremented}
+import chess.repositories.{VersionRepository, UserRepository, InvitationRepository}
 import chess.repositories.InvitationRepository._
 import chess.rest.Controller
 import chess.rest.Errors.{Conflict, Forbidden, NotFound}
@@ -47,6 +49,13 @@ class RejectInvitationController(userId: UserId, invitationId: InvitationId) ext
   }
 
   def waitingForCompleted(inviter: User, invitee: User): Receive = {
-    case InvitationCompleted(result) => complete(InvitationData(result, inviter, invitee))
+    case InvitationCompleted(invitation) =>
+      VersionRepository.endpoint ! IncrementVersion(players)
+      become(waitingForVersionIncremented(invitation, inviter, invitee))
   }
+
+  def waitingForVersionIncremented(invitation: Invitation, inviter: User, invitee: User): Receive = {
+    case VersionIncremented(`players`, _) => complete(InvitationData(invitation, inviter, invitee))
+  }
+
 }
