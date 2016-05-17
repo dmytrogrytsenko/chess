@@ -8,11 +8,13 @@ object Identifiers {
   sealed trait USER_ID
   sealed trait TOKEN
   sealed trait INVITATION_ID
+  sealed trait GAME_ID
 
   type Version = Int @@ VERSION
   type UserId = String @@ USER_ID
   type Token = String @@ TOKEN
   type InvitationId = String @@ INVITATION_ID
+  type GameId = String @@ GAME_ID
 
   implicit class TaggedIntegerOpts(value: Int) {
     def toVersion = value.asInstanceOf[Version]
@@ -22,6 +24,7 @@ object Identifiers {
     def toUserId = value.asInstanceOf[UserId]
     def toToken = value.asInstanceOf[Token]
     def toInvitationId = value.asInstanceOf[InvitationId]
+    def toGameId = value.asInstanceOf[GameId]
   }
 
   implicit class VersionOpts(value: Int) {
@@ -42,5 +45,9 @@ object Identifiers {
 
   object InvitationId {
     def generate() = newUUID.toInvitationId
+  }
+
+  object GameId {
+    def generate() = newUUID.toGameId
   }
 }

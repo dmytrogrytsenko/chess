@@ -15,7 +15,7 @@ class GameTest extends TestBase {
     //act
     val result = Game.create
     //assert
-    result.id.underlying.length should be > 0
+    result.id.length should be > 0
     result.version shouldBe Version.initial
     result.startTime shouldBeInRange DateTime.now +- 2.seconds
     result.board shouldBe Board.initial

@@ -1,14 +1,11 @@
 package chess.game
 
-import chess.common._
-
 object PieceMovements {
 
   def underAttack(game: Game, square: Square): Boolean =
     validMovements(game, game.movingPlayer.opposite)
       .filter(m => m.kind == Regular || m.kind == Capture)
-      .filter(_.dst == square)
-      .nonEmpty
+      .exists(_.dst == square)
 
   def validMovements(game: Game, color: PieceColor): List[Movement] =
     game.board
@@ -45,10 +42,10 @@ object PieceMovements {
         if piece.kind == King
         if game.initials.contains(square('e'))
         if game.initials.contains(square('h'))
-        if game.board.squares.get(square('e')) == Some(Piece(piece.color, Rook))
-        if game.board.squares.get(square('f')) == None
-        if game.board.squares.get(square('g')) == None
-        if game.board.squares.get(square('h')) == Some(Piece(piece.color, Rook))
+        if game.board.squares.get(square('e')).contains(Piece(piece.color, Rook))
+        if game.board.squares.get(square('f')).isEmpty
+        if game.board.squares.get(square('g')).isEmpty
+        if game.board.squares.get(square('h')).contains(Piece(piece.color, Rook))
         if !underAttack(game, square('e'))
         if !underAttack(game, square('f'))
         if !underAttack(game, square('g'))
@@ -62,11 +59,11 @@ object PieceMovements {
         if piece.kind == King
         if game.initials.contains(square('e'))
         if game.initials.contains(square('a'))
-        if game.board.squares.get(square('e')) == Some(Piece(piece.color, Rook))
-        if game.board.squares.get(square('d')) == None
-        if game.board.squares.get(square('c')) == None
-        if game.board.squares.get(square('b')) == None
-        if game.board.squares.get(square('a')) == Some(Piece(piece.color, Rook))
+        if game.board.squares.get(square('e')).contains(Piece(piece.color, Rook))
+        if game.board.squares.get(square('d')).isEmpty
+        if game.board.squares.get(square('c')).isEmpty
+        if game.board.squares.get(square('b')).isEmpty
+        if game.board.squares.get(square('a')).contains(Piece(piece.color, Rook))
         if !underAttack(game, square('e'))
         if !underAttack(game, square('d'))
         if !underAttack(game, square('c'))
