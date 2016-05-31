@@ -18,7 +18,7 @@ abstract class TestBase
   with Matchers
   with EntityBuilders
   with DateTimeRangeSupport
-  with RestSupport
+  with RestStupport
   with MongoSupport {
 
   implicit val materializer: Materializer = ActorMaterializer()

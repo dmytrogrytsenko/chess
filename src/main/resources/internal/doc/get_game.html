@@ -24,11 +24,11 @@
     <div id="slogan">play and enjoy</div>
     <hr/>
     <h1>Chess REST API Documentation</h1>
-    <h2>PUT /invitations/accept</h2>
-    <p>Accept invitation and create new game.</p>
+    <h2>GET /games/:id</h2>
+    <p>Return the game information.</p>
 
     <h3>Request</h3>
-    <samp>PUT http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/invitations/accept?id=<span class="text-success">{id}</span></samp><br/>
+    <samp>GET http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/games/<span class="text-success">{gameId}</span>?version=<span class="text-success">{version}</span></samp><br/>
 
     <h3>Request header</h3>
     <table class="table table-bordered">
@@ -61,17 +61,24 @@
         </thead>
         <tbody>
         <tr>
-            <td>id</td>
+            <td>gameId</td>
             <td>String</td>
             <td>Required</td>
-            <td>The unique identifier of invitation.</td>
-            <td><samp>baabfa7d-74f5-48ab-bf14-f1fdb62d2147</samp></td>
+            <td>The unique identifier of the game.</td>
+            <td><samp>"314d2352-402d-4da9-a8c7-8f6aa446687e"</samp></td>
+        </tr>
+        <tr>
+            <td>version</td>
+            <td>Integer</td>
+            <td>Optional</td>
+            <td>The version of player list.</td>
+            <td><samp>42</samp></td>
         </tr>
         </tbody>
     </table>
 
     <h3>Example of request</h3>
-<pre>PUT http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/invitations/accept?id=<span class="text-success">baabfa7d-74f5-48ab-bf14-f1fdb62d2147</span>
+<pre>GET http://<span class="text-success">{host}</span>:<span class="text-success">{port}</span>/api/games/<span class="text-success">314d2352-402d-4da9-a8c7-8f6aa446687e</span>?version=<span class="text-success">42</span>
 Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
 
     <h3>Response</h3>
@@ -88,7 +95,13 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
             <td><span class="label label-success">200</span></td>
             <td>OK</td>
             <td>&nbsp;</td>
-            <td>The operation is performed successfully.</td>
+            <td>The game information is returned successfully.</td>
+        </tr>
+        <tr>
+            <td><span class="label label-success">204</span></td>
+            <td>No Content</td>
+            <td>&nbsp;</td>
+            <td>The game version is not changed. The content is not returned.</td>
         </tr>
         <tr>
             <td rowspan="2"><span class="label label-danger">401</span></td>
@@ -101,22 +114,10 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
             <td>The supplied authentication is invalid.</td>
         </tr>
         <tr>
-            <td><span class="label label-danger">403</span></td>
-            <td>Forbidden</td>
-            <td><button type="button" class="btn btn-link btn-xs">ACCESS_DENIED</button></td>
-            <td>Access denied. Only invitee can accept the invitation.</td>
-        </tr>
-        <tr>
             <td><span class="label label-danger">404</span></td>
             <td>Not Found</td>
-            <td><button type="button" class="btn btn-link btn-xs">INVITATION_NOT_FOUND</button></td>
-            <td>The invitation not found.</td>
-        </tr>
-        <tr>
-            <td><span class="label label-danger">409</span></td>
-            <td>Confict</td>
-            <td><button type="button" class="btn btn-link btn-xs">INCORRECT_INVITATION_STATUS</button></td>
-            <td>Incorrect invitation status.</td>
+            <td><button type="button" class="btn btn-link btn-xs">GAME_NOT_FOUND</button></td>
+            <td>The requested game is not found.</td>
         </tr>
         </tbody>
     </table>
@@ -124,27 +125,89 @@ Authorization: 15d07e2d-6e0d-470f-8de9-3a8ce0afa934</pre>
     <p>See <a href="errors.html">Error Codes & Responses</a></p>
 
     <h3>Response body</h3>
-    Response body contains <a href="InvitationData.html">InvitationData</a>
-
+    Response body contains <a href="GameData.html">GameData</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th width="1%">Name</th>
+            <th width="10%">Type</th>
+            <th width="1%">Necessity</th>
+            <th>Description</th>
+            <th>Example</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>id</td>
+            <td>String</td>
+            <td>Required</td>
+            <td>The unique identifier of the game.</td>
+            <td><samp><span class="text-info">"id"</span>: <span class="text-danger">"9eabf9d6-c9f6-4dc9-9167-abf9063fff4d"</span></samp></td>
+        </tr>
+        <tr>
+            <td>version</td>
+            <td>Int</td>
+            <td>Required</td>
+            <td>The current version of the game.</td>
+            <td><samp><span class="text-info">"version"</span>: <span class="text-danger">42</span></samp></td>
+        </tr>
+        <tr>
+            <td>whitePlayer</td>
+            <td><a href="UserData.html">UserData</a></td>
+            <td>Required</td>
+            <td>The information about white player.</td>
+            <td><samp><span class="text-info">"whitePlayer"</span>: { ... }</samp></td>
+        </tr>
+        <tr>
+            <td>blackPlayer</td>
+            <td><a href="UserData.html">UserData</a></td>
+            <td>Required</td>
+            <td>The information about black player.</td>
+            <td><samp><span class="text-info">"blackPlayer"</span>: { ... }</samp></td>
+        </tr>
+        <tr>
+            <td>startTime</td>
+            <td>DateTime</td>
+            <td>Required</td>
+            <td>Date and Time in UTC, when the game is started.</td>
+            <td><samp><span class="text-info">"startTime"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span></samp></td>
+        </tr>
+        <tr>
+            <td>fen</td>
+            <td>String</td>
+            <td>Required</td>
+            <td>Current state of the game in Forsyth–Edwards Notation.</td>
+            <td><samp><span class="text-info">"fen"</span>:&nbsp;<span class="text-danger">"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR&nbsp;w&nbsp;KQkq&nbsp;-&nbsp;0&nbsp;1"</span></samp></td>
+        </tr>
+        <tr>
+            <td>completed</td>
+            <td>Boolean</td>
+            <td>Required</td>
+            <td>Indicates if the game is completed.</td>
+            <td><samp><span class="text-info">"completed"</span>: <span class="text-danger">false</span></samp></td>
+        </tr>
+        </tbody>
+    </table>
+    
     <h3>Example of response body</h3>
 <pre>{
     <span class="text-info">"id"</span>: <span class="text-danger">"9eabf9d6-c9f6-4dc9-9167-abf9063fff4d"</span>,
-    <span class="text-info">"inviter"</span>: {
+    <span class="text-info">"version"</span>: <span class="text-success">42</span>,
+    <span class="text-info">"whitePlayer"</span>: {
         <span class="text-info">"id"</span>: <span class="text-danger">"baabfa7d-74f5-48ab-bf14-f1fdb62d2147"</span>,
         <span class="text-info">"name"</span>: <span class="text-danger">"janedoe"</span>,
         <span class="text-info">"displayName"</span>: <span class="text-danger">"Jane Doe"</span>,
         <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:29:17.341Z"</span>
     },
-    <span class="text-info">"invitee"</span>: {
+    <span class="text-info">"blackPlayer"</span>: {
         <span class="text-info">"id"</span>: <span class="text-danger">"2a2cdecc-852e-4cad-8c49-821a07f5d7f8"</span>,
         <span class="text-info">"name"</span>: <span class="text-danger">"johndoe"</span>,
         <span class="text-info">"displayName"</span>: <span class="text-danger">"John Doe"</span>,
         <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:30:17.331Z"</span>
     },
-    <span class="text-info">"createdAt"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>,
-    <span class="text-info">"status"</span> <span class="text-danger">"accepted"</span>,
-    <span class="text-info">"completedAt"</span> <span class="text-danger">"2016-04-30T10:35:24.654Z"</span>,
-    <span class="text-info">"gameId"</span>: <span class="text-danger">"cc7d6001-bea0-4cf9-9095-a6f41a9eca15"</span>
+    <span class="text-info">"startTime"</span>: <span class="text-danger">"2016-04-30T10:34:07.341Z"</span>,
+    <span class="text-info">"fen"</span>: <span class="text-danger">"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR&nbsp;w&nbsp;KQkq&nbsp;-&nbsp;0&nbsp;1"</span>,
+    <span class="text-info">"completed"</span> <span class="text-success">false</span>
 }</pre>
 
 </div>

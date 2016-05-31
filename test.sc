@@ -1,3 +1,6 @@
+
+java.util.UUID.randomUUID().toString
+
 import chess.domain.Identifiers._
 import chess.game.{Game, Pieces, Square}
 
