@@ -4,8 +4,8 @@ import akka.util.Timeout
 import chess.common._
 import chess.domain.Identifiers._
 import chess.domain._
+import chess.game._
 import chess.mongo._
-import chess.repositories.VersionRepository
 import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
 import reactivemongo.api.{DB, MongoDriver}
@@ -116,8 +116,9 @@ trait MongoSupport extends EntityBuilders {
                       inviteeId: UserId = UserId.generate(),
                       createdAt: DateTime = DateTime.now,
                       status: InvitationStatus = InvitationStatus.all.randomValue,
-                      completedAt: Option[DateTime] = Some(DateTime.now)): Invitation = {
-      val invitation = Invitation(id, inviterId, inviteeId, createdAt, status, completedAt)
+                      completedAt: Option[DateTime] = Some(DateTime.now),
+                      gameId: Option[GameId] = Some(GameId.generate())): Invitation = {
+      val invitation = Invitation(id, inviterId, inviteeId, createdAt, status, completedAt, gameId)
       import InvitationCollection.InvitationWriter
       InvitationCollection.add(invitation).await
       invitation
@@ -130,6 +131,36 @@ trait MongoSupport extends EntityBuilders {
 
     def removeInvitations(invitations: Invitation*) = {
       invitations.foreach(invitation => removeInvitation(invitation.id))
+    }
+
+    def getGame(id: GameId): Option[Game] = {
+      import GameCollection.GameIdWriter
+      import GameCollection.GameReader
+      GameCollection.get(id).await
+    }
+
+    def addGame(id: GameId = GameId.generate(),
+                version: Version = Version.initial.next,
+                whitePlayerId: UserId = UserId.generate(),
+                blackPlayerId: UserId = UserId.generate(),
+                startTime: DateTime = DateTime.now,
+                board: Board = Board.initial,
+                movingPlayer: PieceColor = PieceColor.all.randomValue,
+                initials: Set[Square] = Set(Square.all.toSet.randomValue, Square.all.toSet.randomValue),
+                history: List[Movement] = List(buildMovement(), buildMovement())): Game = {
+      val game = Game(id, version, whitePlayerId, blackPlayerId, startTime, board, movingPlayer, initials, history)
+      import GameCollection.GameWriter
+      GameCollection.add(game).await
+      game
+    }
+
+    def removeGame(id: GameId) = {
+      import GameCollection.GameIdWriter
+      GameCollection.remove(id).await
+    }
+
+    def removeGames(games: Game*) = {
+      games.foreach(game => removeGame(game.id))
     }
 
   }

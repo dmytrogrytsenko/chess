@@ -3,7 +3,8 @@ package chess.rest
 import chess.TestBase
 import chess.domain.Identifiers._
 import chess.domain.InvitationData
-import chess.domain.InvitationStatuses.{Rejected, Accepted, Pending, Canceled}
+import chess.domain.InvitationStatuses.{Accepted, Canceled, Pending, Rejected}
+import chess.game.{Board, White}
 import chess.rest.Errors.{Conflict, Forbidden, NotFound, Unauthorized}
 import org.joda.time.DateTime
 
@@ -21,13 +22,15 @@ class AcceptInvitationTest extends TestBase {
     //act
     val result = Rest.acceptInvitation(session.token, invitation.id).to[InvitationData]
     //assert
-    val expected = invitation.copy(status = Accepted, completedAt = result.completedAt)
+    val expected = invitation.copy(status = Accepted, completedAt = result.completedAt, gameId = result.gameId)
     result shouldBe InvitationData(expected, user, invitee)
     result.completedAt.get shouldBeInRange DateTime.now +- 2.seconds
+    result.gameId should not be None
     //cleanup
     Mongo.removeUsers(user, invitee)
     Mongo.removeSessions(session)
     Mongo.removeInvitations(invitation)
+    Mongo.removeGame(result.gameId.get)
   }
 
   it should "increment players version" in {
@@ -44,6 +47,33 @@ class AcceptInvitationTest extends TestBase {
     Mongo.removeUsers(user, invitee)
     Mongo.removeSessions(session)
     Mongo.removeInvitations(invitation)
+    Mongo.removeGame(result.gameId.get)
+  }
+
+  it should "create new game" in {
+    //arrange
+    val user, invitee = Mongo.addUser()
+    val session = Mongo.addSession(userId = invitee.id)
+    val invitation = Mongo.addInvitation(inviterId = user.id, inviteeId = invitee.id, status = Pending)
+    val version = Mongo.getPlayersVersion
+    //act
+    val result = Rest.acceptInvitation(session.token, invitation.id).to[InvitationData]
+    //assert
+    val stored = Mongo.getGame(result.gameId.get).get
+    stored.id shouldBe result.gameId.get
+    stored.version shouldBe Version.initial
+    stored.whitePlayerId shouldBe user.id
+    stored.blackPlayerId shouldBe invitee.id
+    stored.startTime shouldBeInRange DateTime.now +- 2.seconds
+    stored.board shouldBe Board.initial
+    stored.movingPlayer shouldBe White
+    stored.initials shouldBe Board.initial.squares.keySet
+    stored.history.size shouldBe 0
+    //cleanup
+    Mongo.removeUsers(user, invitee)
+    Mongo.removeSessions(session)
+    Mongo.removeInvitations(invitation)
+    Mongo.removeGame(result.gameId.get)
   }
 
   it should "return 401 (Unauthorized) CREDENTIALS_REJECTED if token is incorrect" in {

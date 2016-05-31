@@ -32,7 +32,8 @@ case class Invitation(id: InvitationId,
                       inviteeId: UserId,
                       createdAt: DateTime,
                       status: InvitationStatus,
-                      completedAt: Option[DateTime])
+                      completedAt: Option[DateTime],
+                      gameId: Option[GameId])
 
 object InvitationStatus {
   import InvitationStatuses._
@@ -48,7 +49,8 @@ object Invitation {
       inviteeId = inviteeId,
       createdAt = DateTime.now,
       status = Pending,
-      completedAt = None)
+      completedAt = None,
+      gameId = None)
 }
 
 case class InvitationData(id: InvitationId,
@@ -56,7 +58,8 @@ case class InvitationData(id: InvitationId,
                           invitee: UserData,
                           createdAt: DateTime,
                           status: InvitationStatus,
-                          completedAt: Option[DateTime])
+                          completedAt: Option[DateTime],
+                          gameId: Option[GameId])
 
 object InvitationData {
   def apply(invitation: Invitation,
@@ -68,5 +71,6 @@ object InvitationData {
       invitee = UserData(invitee),
       createdAt = invitation.createdAt,
       status = invitation.status,
-      completedAt = invitation.completedAt)
+      completedAt = invitation.completedAt,
+      gameId = invitation.gameId)
 }

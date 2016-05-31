@@ -1,21 +1,24 @@
 package chess.rest
 
 import akka.http.scaladsl.model.StatusCode
-import akka.http.scaladsl.unmarshalling.{Unmarshaller, PredefinedFromStringUnmarshallers}
-import akka.http.scaladsl.server.PathMatchers
+import akka.http.scaladsl.unmarshalling.{PredefinedFromStringUnmarshallers, Unmarshaller}
+import akka.http.scaladsl.server.PathMatchers._
 import chess.common.Messages.Done
 import chess.domain.Identifiers._
 import chess.domain._
+import chess.game.{PieceKind, Square}
 import chess.rest.Errors.ErrorResult
 import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.ISODateTimeFormat
 import spray.json._
 
-trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarshallers with PathMatchers {
+trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarshallers {
 
   implicit val versionFromStringUnmarshaller = intFromStringUnmarshaller.map(_.toVersion)
   implicit val userIdFromStringUnmarshaller = Unmarshaller.strict[String, UserId](_.toUserId)
   implicit val gameIdFromStringUnmarshaller = Unmarshaller.strict[String, GameId](_.toGameId)
+  implicit val squareFromStringUnmarshaller = Unmarshaller.strict[String, Square](Square.apply)
+  implicit val pieceKindFromStringUnmarshaller = Unmarshaller.strict[String, PieceKind](v => PieceKind(v.head))
   implicit val invitationIdFromStringUnmarshaller = Unmarshaller.strict[String, InvitationId](_.toInvitationId)
 
   val GameIdSegment = Segment.map(_.toGameId)
@@ -101,7 +104,8 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
   implicit val jsonLoginData = jsonFormat2(LoginData.apply)
   implicit val jsonLoginResult = jsonFormat2(LoginResult.apply)
   implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
-  implicit val jsonInvitationData = jsonFormat6(InvitationData.apply)
+  implicit val jsonInvitationData = jsonFormat7(InvitationData.apply)
   implicit val jsonPlayersData = jsonFormat4(PlayersData.apply)
-  implicit val jsonGameData = jsonFormat5(GameData.apply)
+  implicit val jsonGameData = jsonFormat7(GameData.apply)
+  implicit val jsonGamesData = jsonFormat1(GamesData.apply)
 }

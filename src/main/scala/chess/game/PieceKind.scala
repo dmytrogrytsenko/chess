@@ -5,7 +5,7 @@ sealed trait PieceKind {
 }
 
 case object King extends PieceKind {
-  val name = 'K
+  val name = 'K'
 }
 
 case object Queen extends PieceKind {
@@ -29,13 +29,11 @@ case object Pawn extends PieceKind {
 }
 
 object PieceKind {
-  def apply(name: Char): PieceKind = name match {
-    case King.name => King
-    case Queen.name => Queen
-    case Rook.name => Rook
-    case Bishop.name => Bishop
-    case Knight.name => Knight
-    case Pawn.name => Pawn
-    case name => throw new IllegalArgumentException(s"Invalid piece kind name: $name.")
-  }
+  val all = Set(King, Queen, Rook, Bishop, Knight, Pawn)
+
+  def apply(name: Char): PieceKind = all
+    .find(_.name == name)
+    .getOrElse {
+      throw new IllegalArgumentException(s"Invalid piece kind name: $name.")
+    }
 }

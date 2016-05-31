@@ -3,7 +3,7 @@ package chess
 import akka.actor.Props
 import chess.common.actors.BaseActor
 import chess.common.Messages.Start
-import chess.repositories.{InvitationRepository, VersionRepository, SessionRepository, UserRepository}
+import chess.repositories._
 import chess.rest.{ExternalRestService, InternalRestService}
 import chess.settings.ChessSettings
 import reactivemongo.api.MongoDriver
@@ -44,6 +44,7 @@ class ChessGuardian(settings: ChessSettings) extends BaseActor {
     SessionRepository.create(db)
     VersionRepository.create(db)
     InvitationRepository.create(db)
+    GameRepository.create(db)
   }
 
   def hasRole(role: String) = cluster.selfRoles.exists(r => r == role || r == "all")

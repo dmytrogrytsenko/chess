@@ -18,6 +18,7 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
   val name = "invitations"
 
   import UserCollection.{UserIdReader, UserIdWriter}
+  import GameCollection.{GameIdReader, GameIdWriter}
 
   implicit object InvitationIdReader extends BSONReader[BSONString, InvitationId] {
     def read(bson: BSONString): InvitationId = bson.value.toInvitationId
@@ -45,7 +46,8 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
       "inviteeId" -> value.inviteeId,
       "createdAt" -> value.createdAt,
       "status" -> value.status,
-      "completedAt" -> value.completedAt)
+      "completedAt" -> value.completedAt,
+      "gameId" -> value.gameId)
   }
 
   implicit object InvitationReader extends BSONDocumentReader[Invitation] {
@@ -55,7 +57,8 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
       inviteeId = doc.getAs[UserId]("inviteeId").get,
       createdAt = doc.getAs[DateTime]("createdAt").get,
       status = doc.getAs[InvitationStatus]("status").get,
-      completedAt = doc.getAs[DateTime]("completedAt"))
+      completedAt = doc.getAs[DateTime]("completedAt"),
+      gameId = doc.getAs[GameId]("gameId"))
   }
 
   override def ensureIndexes(implicit db: DB, ec: ExecutionContext) =
@@ -89,8 +92,12 @@ object InvitationCollection extends MongoCollection[InvitationId, Invitation] {
       } (Future.successful)
     }
 
-  def complete(id: InvitationId, status: InvitationStatus)(implicit db: DB, ec: ExecutionContext): Future[Invitation] =
+  def complete(id: InvitationId, status: InvitationStatus, gameId: Option[String])
+              (implicit db: DB, ec: ExecutionContext): Future[Invitation] =
     items
-      .findAndUpdate($id(id), $set("status" -> status.value, "completedAt" -> DateTime.now), fetchNewObject = true)
+      .findAndUpdate(
+        selector = $id(id),
+        update = $set("status" -> status.value, "completedAt" -> DateTime.now, "gameId" -> gameId),
+        fetchNewObject = true)
       .map(_.result[Invitation].get)
 }

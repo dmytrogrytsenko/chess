@@ -1,11 +1,15 @@
 package chess.mongo
 
+import chess.common._
 import chess.common.mongo.MongoCollection
 import chess.domain.Identifiers._
 import chess.game._
 import org.joda.time.DateTime
+import reactivemongo.api.DB
 import reactivemongo.bson._
 import reactivemongo.extensions.dao.Handlers.BSONDateTimeHandler
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object GameCollection extends MongoCollection[GameId, Game] {
   val name = "games"
@@ -32,6 +36,14 @@ object GameCollection extends MongoCollection[GameId, Game] {
     def write(value: Square): BSONString = BSONString(value.name)
   }
 
+  implicit object PieceColorReader extends BSONReader[BSONString, PieceColor] {
+    def read(bson: BSONString): PieceColor = PieceColor(bson.value.head)
+  }
+
+  implicit object PieceColorWriter extends BSONWriter[PieceColor, BSONString] {
+    def write(value: PieceColor): BSONString = BSONString(value.name.toString)
+  }
+
   implicit object PieceReader extends BSONReader[BSONString, Piece] {
     def read(bson: BSONString): Piece = Piece(bson.value)
   }
@@ -40,14 +52,57 @@ object GameCollection extends MongoCollection[GameId, Game] {
     def write(value: Piece): BSONString = BSONString(value.name)
   }
 
+  implicit object MovementKindReader extends BSONReader[BSONString, MovementKind] {
+    def read(bson: BSONString): MovementKind = MovementKind(bson.value)
+  }
+
+  implicit object MovementKindWriter extends BSONWriter[MovementKind, BSONString] {
+    def write(value: MovementKind): BSONString = BSONString(value.name)
+  }
+
+  implicit object CastlingKindReader extends BSONReader[BSONString, CastlingKind] {
+    def read(bson: BSONString): CastlingKind = CastlingKind(bson.value)
+  }
+
+  implicit object CastlingKindWriter extends BSONWriter[CastlingKind, BSONString] {
+    def write(value: CastlingKind): BSONString = BSONString(value.name)
+  }
+
   implicit object BoardWriter extends BSONDocumentWriter[Board] {
-    def write(value: Board): BSONDocument = value.squares
-      .map { case (square, piece) => $doc(square.name -> piece.name) }
-      .foldLeft($empty)(_ ++ _)
+    def write(value: Board): BSONDocument =
+      value.squares
+        .map { case (square, piece) => $doc(square.name -> piece.name) }
+        .foldLeft($empty)(_ ++ _)
   }
 
   implicit object BoardReader extends BSONDocumentReader[Board] {
-    def read(doc: BSONDocument): Board = ???
+    def read(doc: BSONDocument): Board =
+      doc.elements
+        .map { case (s, p) => Square(s) -> Piece(p.asInstanceOf[BSONString].value) }
+        .toMap
+        .pipe(Board.apply)
+  }
+
+  implicit object MovementWriter extends BSONDocumentWriter[Movement] {
+    def write(value: Movement) = $doc(
+      "kind" -> value.kind,
+      "piece" -> value.piece,
+      "src" -> value.src,
+      "dst" ->  value.dst,
+      "captured" -> value.captured,
+      "promoted" -> value.promoted,
+      "castlingKind" -> value.castlingKind)
+  }
+
+  implicit object MovementReader extends BSONDocumentReader[Movement] {
+    def read(doc: BSONDocument) = Movement(
+      kind = doc.getAs[MovementKind]("kind").get,
+      piece = doc.getAs[Piece]("piece").get,
+      src = doc.getAs[Square]("src").get,
+      dst = doc.getAs[Square]("dst").get,
+      captured = doc.getAs[Piece]("captured"),
+      promoted = doc.getAs[Piece]("promoted"),
+      castlingKind = doc.getAs[CastlingKind]("castlingKind"))
   }
 
   implicit object GameWriter extends BSONDocumentWriter[Game] {
@@ -76,4 +131,7 @@ object GameCollection extends MongoCollection[GameId, Game] {
       history = doc.getAs[List[Movement]]("history").get
     )
   }
+
+  def getGames(userId: UserId)(implicit db: DB, ec: ExecutionContext): Future[List[Game]] =
+    items.find($or($doc("whitePlayerId" -> userId), $doc("blackPlayerId" -> userId))).cursor[Game].collect[List]()
 }

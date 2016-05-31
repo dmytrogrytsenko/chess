@@ -3,8 +3,8 @@ package chess.repositories
 import chess.common._
 import chess.common.Messages.Start
 import chess.common.actors.{BaseActor, NodeSingleton1}
-import chess.domain.Identifiers.{InvitationId, UserId}
-import chess.domain.{InvitationStatus, Invitation}
+import chess.domain.Identifiers.{GameId, InvitationId, UserId}
+import chess.domain.{Invitation, InvitationStatus}
 import chess.mongo.InvitationCollection
 import reactivemongo.api.DB
 
@@ -16,7 +16,7 @@ object InvitationRepository extends NodeSingleton1[InvitationRepository, DB] {
   case class Invite(inviterId: UserId, inviteeId: UserId)
   case class GetInvitation(id: InvitationId)
   case class InvitationNotFound(id: InvitationId)
-  case class CompleteInvitation(id: InvitationId, status: InvitationStatus)
+  case class CompleteInvitation(id: InvitationId, status: InvitationStatus, gameId: Option[GameId] = None)
   case class InvitationCompleted(invitation: Invitation)
 }
 
@@ -44,7 +44,7 @@ class InvitationRepository(implicit val db: DB) extends BaseActor {
     case Invite(inviterId, inviteeId) =>
       invite(inviterId, inviteeId) pipeTo sender()
 
-    case CompleteInvitation(id, status) =>
-      complete(id, status) map InvitationCompleted.apply pipeTo sender()
+    case CompleteInvitation(id, status, gameId) =>
+      complete(id, status, gameId) map InvitationCompleted.apply pipeTo sender()
   }
 }

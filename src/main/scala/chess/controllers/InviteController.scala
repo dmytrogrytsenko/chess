@@ -38,7 +38,7 @@ class InviteController(userId: UserId, inviteeId: UserId) extends Controller {
   }
 
   def waiting(data: Data): Receive = {
-    case invitation @ Invitation(_, `userId`, `inviteeId`, _, _, _) =>
+    case invitation @ Invitation(_, `userId`, `inviteeId`, _, _, _, _) =>
       wait(data.copy(invitation = Some(invitation)))
     case UserFoundById(user) if user.id == userId =>
       wait(data.copy(inviter = Some(user)))

@@ -2,7 +2,7 @@ package chess.mongo
 
 import chess.TestBase
 import chess.common._
-import chess.domain.Identifiers.{UserId, InvitationId}
+import chess.domain.Identifiers.{GameId, InvitationId, UserId}
 import chess.domain.InvitationStatus
 import chess.domain.InvitationStatuses.{Accepted, Pending}
 import org.joda.time.DateTime
@@ -136,8 +136,9 @@ class InvitationCollectionTest extends TestBase {
     //arrange
     val invitation = Mongo.addInvitation()
     val status = (InvitationStatus.all - Pending).randomValue
+    val gameId = GameId.generate()
     //act
-    val result = complete(invitation.id, status).await
+    val result = complete(invitation.id, status, Some(gameId)).await
     //assert
     result.id shouldBe invitation.id
     result.inviterId shouldBe invitation.inviterId
@@ -145,6 +146,7 @@ class InvitationCollectionTest extends TestBase {
     result.createdAt shouldBe invitation.createdAt
     result.status shouldBe status
     result.completedAt.get shouldBeInRange DateTime.now +- 2.seconds
+    result.gameId shouldBe Some(gameId)
     //cleanup
     Mongo.removeInvitations(invitation)
   }

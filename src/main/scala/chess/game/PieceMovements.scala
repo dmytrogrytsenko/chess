@@ -114,7 +114,7 @@ object PieceMovements {
         fileDelta <- List(-1, 1)
         dst <- src.sibling(fileDelta, rankDelta)
         if !game.board.squares.contains(dst)
-        previousMovement <- game.history.headOption
+        previousMovement <- game.history.lastOption
         if previousMovement.kind == Regular
         if previousMovement.piece.color != piece.color
         if previousMovement.piece.kind == Pawn

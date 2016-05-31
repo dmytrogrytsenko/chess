@@ -3,12 +3,14 @@ package chess.controllers
 import akka.actor.Props
 import chess.common.Messages.Start
 import chess.domain.Identifiers._
-import chess.domain.{InvitationData, User, Invitation}
+import chess.domain.{Invitation, InvitationData, User}
 import chess.domain.InvitationStatuses.{Accepted, Pending}
+import chess.game.Game
 import chess.mongo.VersionCollection._
-import chess.repositories.UserRepository.{UserFoundById, UserNotFoundById, FindUserById}
-import chess.repositories.VersionRepository.{VersionIncremented, IncrementVersion}
-import chess.repositories.{VersionRepository, UserRepository, InvitationRepository}
+import chess.repositories.GameRepository.{AddGame, GameAdded}
+import chess.repositories.UserRepository.{FindUserById, UserFoundById, UserNotFoundById}
+import chess.repositories.VersionRepository.{IncrementVersion, VersionIncremented}
+import chess.repositories.{GameRepository, InvitationRepository, UserRepository, VersionRepository}
 import chess.repositories.InvitationRepository._
 import chess.rest.Controller
 import chess.rest.Errors.{Conflict, Forbidden, NotFound}
@@ -44,7 +46,14 @@ class AcceptInvitationController(userId: UserId, invitationId: InvitationId) ext
   def waitingForInvitee(inviter: User): Receive = {
     case _: UserNotFoundById => failure(NotFound.userNotFound)
     case UserFoundById(invitee) =>
-      InvitationRepository.endpoint ! CompleteInvitation(invitationId, Accepted)
+      val game = Game.create(inviter.id, invitee.id)
+      GameRepository.endpoint ! AddGame(game)
+      become(waitingForGameAdded(inviter, invitee))
+  }
+
+  def waitingForGameAdded(inviter: User, invitee: User): Receive = {
+    case GameAdded(gameId) =>
+      InvitationRepository.endpoint ! CompleteInvitation(invitationId, Accepted, Some(gameId))
       become(waitingForCompleted(inviter, invitee))
   }
 

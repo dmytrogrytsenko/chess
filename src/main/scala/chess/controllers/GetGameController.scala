@@ -2,7 +2,7 @@ package chess.controllers
 
 import akka.actor.Props
 import chess.common.Messages.Start
-import chess.domain.{GameData, Game}
+import chess.domain.GameData
 import chess.domain.Identifiers._
 import chess.game.Game
 import chess.repositories.UserRepository.{RetrievedUsers, GetUsers}

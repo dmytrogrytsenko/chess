@@ -4,6 +4,7 @@ import java.util.UUID
 
 import chess.domain._
 import chess.domain.Identifiers._
+import chess.game._
 import org.joda.time.DateTime
 
 import scala.util.Random
@@ -51,6 +52,20 @@ trait EntityBuilders {
                       inviteeId: UserId = UserId.generate(),
                       createdAt: DateTime = DateTime.now,
                       status: InvitationStatus = InvitationStatus.all.randomValue,
-                      completedAt: Option[DateTime] = Some(DateTime.now)) =
-    Invitation(id, inviterId, inviteeId, createdAt, status, completedAt)
+                      completedAt: Option[DateTime] = Some(DateTime.now),
+                      gameId: Option[GameId] = Some(GameId.generate())) =
+    Invitation(id, inviterId, inviteeId, createdAt, status, completedAt, gameId)
+
+  def buildPiece(color: PieceColor = PieceColor.all.randomValue,
+                 kind: PieceKind = PieceKind.all.randomValue): Piece =
+    Piece(color, kind)
+
+  def buildMovement(kind: MovementKind = MovementKind.all.randomValue,
+                    piece: Piece = buildPiece(),
+                    src: Square = Square.all.toSet.randomValue,
+                    dst: Square = Square.all.toSet.randomValue,
+                    captured: Option[Piece] = Some(buildPiece()),
+                    promoted: Option[Piece] = Some(buildPiece()),
+                    castlingKind: Option[CastlingKind] = Some(CastlingKind.all.randomValue)): Movement =
+    Movement(kind, piece, src, dst, captured, promoted, castlingKind)
 }

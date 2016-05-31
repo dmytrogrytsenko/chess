@@ -16,9 +16,11 @@ case object Black extends PieceColor {
 }
 
 object PieceColor {
-  def apply(name: Char): PieceColor = name match {
-    case White.name => White
-    case Black.name => Black
-    case name => throw new IllegalArgumentException(s"Invalid piece color name: $name.")
-  }
+  def all = Set(White, Black)
+
+  def apply(name: Char): PieceColor = all
+    .find(_.name == name)
+    .getOrElse {
+      throw new IllegalArgumentException(s"Invalid piece color name: $name.")
+    }
 }

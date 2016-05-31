@@ -2,7 +2,7 @@ package chess.game
 
 import chess.game.Pieces._
 import chess.TestBase
-import chess.domain.Identifiers.Version
+import chess.domain.Identifiers._
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -13,7 +13,7 @@ class GameTest extends TestBase {
 
   it should "create new game" in {
     //act
-    val result = Game.create
+    val result = Game.create(UserId.generate(), UserId.generate())
     //assert
     result.id.length should be > 0
     result.version shouldBe Version.initial
@@ -28,16 +28,18 @@ class GameTest extends TestBase {
 
   it should "return false for new game" in {
     //act
-    val result = Game.create.check
+    val result = Game.create(UserId.generate(), UserId.generate()).check
     //assert
     result shouldBe false
   }
 
   it should "return true if king in check from queen" in {
     //arrange
-    val game = Game.create.copy(board = Board.empty.copy(squares = Map(
-      Square("e1") -> WhiteKing,
-      Square("b4") -> BlackQueen)))
+    val game = Game
+      .create(UserId.generate(), UserId.generate())
+      .copy(board = Board.empty.copy(squares = Map(
+        Square("e1") -> WhiteKing,
+        Square("b4") -> BlackQueen)))
     //act
     val result = game.check
     //assert

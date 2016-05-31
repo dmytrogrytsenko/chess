@@ -18,6 +18,7 @@ case class Game(id: GameId,
   lazy val check = board.king(movingPlayer).exists(underAttack(this, _))
   lazy val checkmate: Boolean = check && movements.isEmpty
   lazy val stalemate: Boolean = !check && movements.isEmpty
+  lazy val completed = movements.isEmpty
 
   def make(movement: Movement): Game = copy(
     version = version.next,
@@ -25,6 +26,8 @@ case class Game(id: GameId,
     movingPlayer = movingPlayer.opposite,
     initials = initials - movement.src,
     history = history :+ movement)
+
+  lazy val fen = FenBuilder.build(this)
 }
 
 object Game {
