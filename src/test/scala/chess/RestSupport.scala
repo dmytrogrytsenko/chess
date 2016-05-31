@@ -2,14 +2,14 @@ package chess
 
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
-import akka.http.scaladsl.model.headers.{GenericHttpCredentials, Authorization}
+import akka.http.scaladsl.model.headers.{Authorization, GenericHttpCredentials}
 import akka.stream.Materializer
 import akka.testkit.TestKitBase
 import akka.util.Timeout
 import chess.common._
-import chess.domain.Identifiers.{InvitationId, UserId, Version, Token}
-import chess.domain.{LoginResult, User, LoginData, RegisterData}
-import chess.rest.Errors.{RestException, ErrorResult}
+import chess.domain.Identifiers.{GameId, InvitationId, Token, UserId, Version}
+import chess.domain.{LoginData, LoginResult, RegisterData, User}
+import chess.rest.Errors.{ErrorResult, RestException}
 import chess.rest.JsonProtocol
 import org.scalatest.Matchers
 import org.scalatest.exceptions.TestFailedException
@@ -80,6 +80,17 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
       .withHeaders(Authorization(GenericHttpCredentials(token, "")))
       .execute
 
+    def getGames(token: Token) = HttpRequest()
+      .withMethod(HttpMethods.GET)
+      .withUri(s"$baseUrl/games")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
+    def getGame(token: Token, gameId: GameId, version: Option[Version] = None) = HttpRequest()
+      .withMethod(HttpMethods.GET)
+      .withUri(s"$baseUrl/games/$gameId${version.map(v => s"?version=$v").getOrElse("")}")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
   }
 
   implicit class RichHttpRequest(request: HttpRequest) {

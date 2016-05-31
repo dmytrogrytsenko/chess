@@ -20,7 +20,7 @@ class GetGameController(userId: UserId, gameId: GameId, version: Option[Version]
   def receive = {
     case Start => GameRepository.endpoint ! GetGame(gameId)
     case GameNotFound(`gameId`) => failure(NotFound.gameNotFound)
-    case game: Game if version.contains(game.version) => complete(None)
+    case game: Game if version.contains(game.version) => complete(Option.empty[GameData])
     case game: Game =>
       UserRepository.endpoint ! GetUsers(Set(game.whitePlayerId, game.blackPlayerId))
       become(waitingForUsers(game))
