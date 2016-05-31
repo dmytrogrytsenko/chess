@@ -33,6 +33,7 @@ object Errors {
     def resourceNotFound = ErrorResult(StatusCodes.NotFound, "RESOURCE_NOT_FOUND", "The requested resource could not be found")
     def userNotFound = ErrorResult(StatusCodes.NotFound, "USER_NOT_FOUND", "User not found")
     def invitationNotFound = ErrorResult(StatusCodes.NotFound, "INVITATION_NOT_FOUND", "Invitation not found")
+    def gameNotFound = ErrorResult(StatusCodes.NotFound, "GAME_NOT_FOUND", "Game not found")
   }
 
   //409

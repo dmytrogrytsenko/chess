@@ -1,7 +1,6 @@
 package chess.routes
 
 import akka.http.scaladsl.model.StatusCodes._
-import chess.common.Messages.Done
 import chess.controllers._
 import chess.domain.Identifiers.{InvitationId, UserId, Version}
 import chess.domain.{InvitationData, PlayersData}

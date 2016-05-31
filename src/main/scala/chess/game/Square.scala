@@ -28,7 +28,7 @@ object Rank {
 
 case class Square(file: File, rank: Rank) {
   val index = file.index * 10 + rank.index
-  val name = file.name + rank.name
+  val name = file.name.toString + rank.name.toString
   def sibling(fileDelta: Int, rankDelta: Int): Option[Square] =
     Square.get(file.index + fileDelta, rank.index + rankDelta)
 }

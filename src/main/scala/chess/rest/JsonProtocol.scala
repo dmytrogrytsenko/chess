@@ -2,6 +2,7 @@ package chess.rest
 
 import akka.http.scaladsl.model.StatusCode
 import akka.http.scaladsl.unmarshalling.{Unmarshaller, PredefinedFromStringUnmarshallers}
+import akka.http.scaladsl.server.PathMatchers
 import chess.common.Messages.Done
 import chess.domain.Identifiers._
 import chess.domain._
@@ -10,11 +11,14 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.ISODateTimeFormat
 import spray.json._
 
-trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarshallers {
+trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarshallers with PathMatchers {
 
   implicit val versionFromStringUnmarshaller = intFromStringUnmarshaller.map(_.toVersion)
   implicit val userIdFromStringUnmarshaller = Unmarshaller.strict[String, UserId](_.toUserId)
+  implicit val gameIdFromStringUnmarshaller = Unmarshaller.strict[String, GameId](_.toGameId)
   implicit val invitationIdFromStringUnmarshaller = Unmarshaller.strict[String, InvitationId](_.toInvitationId)
+
+  val GameIdSegment = Segment.map(_.toGameId)
 
   implicit object DoneJsonFormat extends RootJsonFormat[Done] {
     def write(value: Done): JsValue = JsString("")
@@ -82,6 +86,14 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
     def write(status: InvitationStatus): JsValue = JsString(status.value)
   }
 
+  implicit object GameIdJsonFormat extends JsonFormat[GameId] {
+    def read(json: JsValue): GameId = json match {
+      case JsString(value) => value.toGameId
+      case _ => throw new DeserializationException("Expected GameId as JsString")
+    }
+    def write(value: GameId): JsValue = JsString(value)
+  }
+
   implicit val jsonErrorResult = jsonFormat3(ErrorResult.apply)
   implicit val jsonUserData = jsonFormat4(UserData.apply)
   implicit val jsonRegisterData = jsonFormat3(RegisterData.apply)
@@ -91,4 +103,5 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
   implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
   implicit val jsonInvitationData = jsonFormat6(InvitationData.apply)
   implicit val jsonPlayersData = jsonFormat4(PlayersData.apply)
+  implicit val jsonGameData = jsonFormat5(GameData.apply)
 }

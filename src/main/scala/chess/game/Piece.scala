@@ -1,6 +1,15 @@
 package chess.game
 
-case class Piece(color: PieceColor, kind: PieceKind)
+case class Piece(color: PieceColor, kind: PieceKind) {
+  val name = color.name.toString + kind.name.toString
+}
+
+object Piece {
+  def apply(name: String): Piece = {
+    require(name.length == 2)
+    Piece(PieceColor(name.head), PieceKind(name.last))
+  }
+}
 
 object Pieces {
   val WhiteKing = Piece(White, King)
@@ -17,3 +26,4 @@ object Pieces {
   val BlackKnight = Piece(Black, Knight)
   val BlackPawn = Piece(Black, Pawn)
 }
+

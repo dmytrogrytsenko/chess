@@ -6,6 +6,8 @@ import chess.game.PieceMovements._
 
 case class Game(id: GameId,
                 version: Version,
+                whitePlayerId: UserId,
+                blackPlayerId: UserId,
                 startTime: DateTime,
                 board: Board,
                 movingPlayer: PieceColor,
@@ -26,9 +28,11 @@ case class Game(id: GameId,
 }
 
 object Game {
-  def create: Game = new Game(
-    id = GameId.generate,
+  def create(whitePlayerId: UserId, blackPlayerId: UserId): Game = new Game(
+    id = GameId.generate(),
     version = Version.initial,
+    whitePlayerId = whitePlayerId,
+    blackPlayerId = blackPlayerId,
     startTime = DateTime.now,
     board = Board.initial,
     movingPlayer = White,
