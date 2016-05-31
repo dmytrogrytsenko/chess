@@ -2,7 +2,7 @@ package chess.rest
 
 import akka.util.Timeout
 import chess.common.actors.NodeSingleton1
-import chess.routes.{PlayerRoutes, SocketRoutes, UserRoutes, WebRoutes}
+import chess.routes._
 import chess.settings.EndpointSettings
 
 import scala.concurrent.ExecutionContextExecutor
@@ -12,6 +12,7 @@ object ExternalRestService extends NodeSingleton1[ExternalRestService, EndpointS
 class ExternalRestService(val settings: EndpointSettings) extends RestService
   with UserRoutes
   with PlayerRoutes
+  with GameRoutes
   with WebRoutes
   with SocketRoutes {
 
@@ -19,5 +20,5 @@ class ExternalRestService(val settings: EndpointSettings) extends RestService
   implicit def timeout: Timeout = settings.defaultTimeout
 
   val webPath = "external"
-  val routes = pathPrefix("api") { userRoutes ~ playerRoutes } ~ webRoutes ~ socketRoutes
+  val routes = pathPrefix("api") { userRoutes ~ playerRoutes ~ gameRoutes } ~ webRoutes ~ socketRoutes
 }
