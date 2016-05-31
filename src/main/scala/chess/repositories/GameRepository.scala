@@ -15,6 +15,8 @@ object GameRepository extends NodeSingleton1[GameRepository, DB] {
   case class GamesFoundByUser(userId: UserId, games: List[Game])
   case class AddGame(game: Game)
   case class GameAdded(gameId: GameId)
+  case class UpdateGame(game: Game)
+  case class GameUpdated(gameId: GameId)
 }
 
 class GameRepository(implicit val db: DB) extends BaseActor {
@@ -36,6 +38,9 @@ class GameRepository(implicit val db: DB) extends BaseActor {
 
     case AddGame(game) =>
       add(game).map(_ => GameAdded(game.id)).pipeTo(sender())
+
+    case UpdateGame(game) =>
+      update(game.id, game).map(_ => GameUpdated(game.id)).pipeTo(sender())
 
   }
 }

@@ -139,6 +139,12 @@ trait MongoSupport extends EntityBuilders {
       GameCollection.get(id).await
     }
 
+    def addGame(game: Game): Game = {
+      import GameCollection.GameWriter
+      GameCollection.add(game).await
+      game
+    }
+
     def addGame(id: GameId = GameId.generate(),
                 version: Version = Version.initial.next,
                 whitePlayerId: UserId = UserId.generate(),

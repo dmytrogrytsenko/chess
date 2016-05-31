@@ -16,6 +16,7 @@ object Errors {
     object Validation {
       def requiredMemberEmpty(name: String) = validation(s"The request content validation is failed: Required member '$name' is empty")
     }
+    def invalidMovement = ErrorResult(StatusCodes.BadRequest, "INVALID_MOVEMENT", "The movement is invalid")
   }
 
   //401

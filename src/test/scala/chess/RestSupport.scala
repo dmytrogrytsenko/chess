@@ -9,6 +9,7 @@ import akka.util.Timeout
 import chess.common._
 import chess.domain.Identifiers.{GameId, InvitationId, Token, UserId, Version}
 import chess.domain.{LoginData, LoginResult, RegisterData, User}
+import chess.game.{PieceKind, Square}
 import chess.rest.Errors.{ErrorResult, RestException}
 import chess.rest.JsonProtocol
 import org.scalatest.Matchers
@@ -89,6 +90,12 @@ trait RestSupport extends TestKitBase with Matchers with JsonProtocol {
     def getGame(token: Token, gameId: GameId, version: Option[Version] = None) = HttpRequest()
       .withMethod(HttpMethods.GET)
       .withUri(s"$baseUrl/games/$gameId${version.map(v => s"?version=$v").getOrElse("")}")
+      .withHeaders(Authorization(GenericHttpCredentials(token, "")))
+      .execute
+
+    def move(token: Token, gameId: GameId, src: Square, dst: Square, promoted: Option[PieceKind] = None) = HttpRequest()
+      .withMethod(HttpMethods.POST)
+      .withUri(s"$baseUrl/games/$gameId/move?src=${src.name}&dst=${dst.name}${promoted.map(v => s"&promoted=${v.name}").getOrElse("")}")
       .withHeaders(Authorization(GenericHttpCredentials(token, "")))
       .execute
   }
