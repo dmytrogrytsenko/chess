@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.PathMatchers._
 import chess.common.Messages.Done
 import chess.domain.Identifiers._
 import chess.domain._
-import chess.game.{PieceKind, Square}
+import chess.game.{PieceColor, PieceKind, Square}
 import chess.rest.Errors.ErrorResult
 import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.ISODateTimeFormat
@@ -97,6 +97,14 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
     def write(value: GameId): JsValue = JsString(value)
   }
 
+  implicit object PieceColorJsonFormat extends JsonFormat[PieceColor] {
+    def read(json: JsValue): PieceColor = json match {
+      case JsString(value) => PieceColor(value.head)
+      case _ => throw new DeserializationException("Expected PieceColor as JsString")
+    }
+    def write(color: PieceColor): JsValue = JsString(color.name.toString)
+  }
+
   implicit val jsonErrorResult = jsonFormat3(ErrorResult.apply)
   implicit val jsonUserData = jsonFormat4(UserData.apply)
   implicit val jsonRegisterData = jsonFormat3(RegisterData.apply)
@@ -106,6 +114,6 @@ trait JsonProtocol extends DefaultJsonProtocol with PredefinedFromStringUnmarsha
   implicit val jsonProfileResult = jsonFormat1(ProfileResult.apply)
   implicit val jsonInvitationData = jsonFormat7(InvitationData.apply)
   implicit val jsonPlayersData = jsonFormat4(PlayersData.apply)
-  implicit val jsonGameData = jsonFormat7(GameData.apply)
+  implicit val jsonGameData = jsonFormat8(GameData.apply)
   implicit val jsonGamesData = jsonFormat1(GamesData.apply)
 }

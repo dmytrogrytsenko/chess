@@ -133,5 +133,9 @@ object GameCollection extends MongoCollection[GameId, Game] {
   }
 
   def getGames(userId: UserId)(implicit db: DB, ec: ExecutionContext): Future[List[Game]] =
-    items.find($or($doc("whitePlayerId" -> userId), $doc("blackPlayerId" -> userId))).cursor[Game].collect[List]()
+    items
+      .find($or($doc("whitePlayerId" -> userId), $doc("blackPlayerId" -> userId)))
+      .cursor[Game]
+      .collect[List]()
+      .map(_.filterNot(_.completed))
 }

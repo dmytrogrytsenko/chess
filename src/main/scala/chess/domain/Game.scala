@@ -2,7 +2,7 @@ package chess.domain
 
 import chess.common._
 import chess.domain.Identifiers._
-import chess.game.Game
+import chess.game.{Game, PieceColor}
 import org.joda.time.DateTime
 
 case class GameData(id: GameId,
@@ -10,6 +10,7 @@ case class GameData(id: GameId,
                     whitePlayer: UserData,
                     blackPlayer: UserData,
                     startTime: DateTime,
+                    movingPlayer: PieceColor,
                     fen: String,
                     completed: Boolean)
 
@@ -27,6 +28,7 @@ object GameData {
         .getOrElse(User.unknown(game.blackPlayerId))
         .pipe(UserData.apply),
       startTime = game.startTime,
+      movingPlayer = game.movingPlayer,
       fen = game.fen,
       completed = game.completed)
 }
