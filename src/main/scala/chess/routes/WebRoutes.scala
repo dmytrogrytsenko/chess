@@ -8,10 +8,12 @@ trait WebRoutes extends Routes {
   val webRoutes =
     get {
       pathEndOrSingleSlash {
-        getFromResource(s"$webPath/index.html")
+        getFromFile(s"./src/main/resources/$webPath/index.html")
+        //getFromResource(s"$webPath/index.html")
       }
     } ~
       get {
-        getFromResourceDirectory(webPath)
+        getFromDirectory(webPath)
+        //getFromResourceDirectory(webPath)
       }
 }
